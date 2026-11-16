@@ -1,0 +1,42 @@
+name: Task
+description: A unit of work that will be closed by a single pull request.
+title: "<type>(<area>): <summary>"
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why this work is needed. Link the relevant spec section or ADR.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What this issue delivers. List files or modules where known.
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: What this issue deliberately does not cover.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checkable conditions that must hold before the PR is merged.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: input
+    id: spec
+    attributes:
+      label: Spec / ADR reference
+      description: e.g. `docs/spec/SPEC.md#levels`, `docs/adr/0002-...`. If this changes the spec, an ADR is required.
+  - type: input
+    id: depends-on
+    attributes:
+      label: Depends on
+      description: Issues that must be merged first, e.g. `#2, #5`.

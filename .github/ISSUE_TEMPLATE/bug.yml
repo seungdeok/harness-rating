@@ -1,0 +1,44 @@
+name: Bug report
+description: The CLI crashed, produced wrong output, or behaved unexpectedly.
+title: "bug: <summary>"
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Commands you ran and, if possible, a minimal repository layout that triggers the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Paste the terminal or JSON output.
+    validations:
+      required: true
+  - type: input
+    id: cli-version
+    attributes:
+      label: CLI version
+      placeholder: harness-rating v0.1.0
+    validations:
+      required: true
+  - type: input
+    id: rubric-version
+    attributes:
+      label: Rubric version
+      placeholder: rubric v0.1.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Node 24.x, macOS 15
