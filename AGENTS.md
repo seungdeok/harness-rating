@@ -6,7 +6,6 @@ A deterministic CLI that statically scans a repository's AI coding agent harness
 
 - Spec: `docs/spec/SPEC.md`. It changes only through an ADR: see `docs/adr/README.md`.
 - Decisions: `docs/adr/`
-- Related tools and papers: `docs/related-work.md`
 
 ## Working rules
 
