@@ -8,3 +8,4 @@ CLAUDE.local.md
 
 node_modules/
 dist/
+rubric/validate.cjs

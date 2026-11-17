@@ -8,21 +8,30 @@
 		"harness-rating": "dist/cli.js"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"rubric/schema.json",
+		"rubric/validate.cjs"
 	],
 	"engines": {
 		"node": ">=24"
 	},
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json",
+		"build": "npm run generate:rubric-validator && tsc -p tsconfig.build.json",
 		"typecheck": "tsc",
 		"lint": "biome check",
-		"test": "vitest run"
+		"test": "npm run generate:rubric-validator && vitest run",
+		"validate:rubric": "npm run generate:rubric-validator && node src/rubric/validate-cli.ts test/fixtures/rubric/valid.json",
+		"generate:rubric-validator": "node scripts/compile-rubric-schema.mjs",
+		"prepack": "npm run build"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.6.8",
 		"@types/node": "26.6.6",
 		"typescript": "7.0.2",
-		"vitest": "5.1.0"
+		"vitest": "5.1.0",
+		"ajv": "^8.20.0"
+	},
+	"dependencies": {
+		"yaml": "^2.9.1"
 	}
 }
