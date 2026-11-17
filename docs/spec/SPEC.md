@@ -48,7 +48,7 @@ From v0.2, `--include-user` also reads known global paths and reports a separate
 4. **Independent implementation.** Ideas from existing tools (maturity levels, CI gates) may inform the design, but code, check lists, level names, and wording are not copied.
 5. **Resist common workarounds.** Checks look at content, not just file existence, so trivial workarounds such as empty files fail. Static scanning cannot stop deliberate gaming (see [Limitations](#limitations)).
 6. **No unsupported numbers.** Levels are lists of required checks, structured like [SLSA levels](https://slsa.dev/spec/v1.0/levels). Weights come from source counts, using [OpenSSF Scorecard](https://scorecard.dev/)'s values. There are no percentage thresholds. A detection parameter uses the source's number when the source gives one; otherwise it is marked as proposed and calibrated during [validity checking](#validity).
-7. **Safe scanning.** The scanner does not follow symbolic links, does not read paths outside the repository, and does not read the contents of files above a size cap.
+7. **Safe scanning.** The scanner does not follow symbolic links, does not read paths outside the repository, and does not read the contents of files above a size cap (proposed; see [ADR 0002](../adr/0002-file-size-cap.md)).
 
 ## Scope
 
@@ -288,6 +288,5 @@ A monthly scheduled workflow checks that every source URL is reachable and opens
 
 | Question | Decided in |
 | --- | --- |
-| File size cap (512 KiB proposed) | #10 |
 | D2: which scripts count as "check scripts" | #14 |
 | Validity checking: model, agent, repositories, tasks | #20 |
