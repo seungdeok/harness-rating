@@ -1,0 +1,39 @@
+{
+	"version": "0.1.0",
+	"sources_version": "2026-11-16",
+	"evidence_tiers": {
+		"A": { "min_orgs": 3, "weight": 10 },
+		"B": { "min_orgs": 2, "weight": 7.5 },
+		"C": { "min_orgs": 1, "weight": 5 }
+	},
+	"levels": {
+		"L1": { "requires": ["A1"] }
+	},
+	"checks": [
+		{
+			"id": "A1",
+			"dimension": "guides",
+			"title": "Placeholder check for schema validation",
+			"tier": "B",
+			"check": "placeholder-check",
+			"params": {},
+			"applies_when": "always",
+			"supported_by": ["agents-md"],
+			"sources": [
+				{
+					"org": "Example Org",
+					"url": "https://example.com/guide",
+					"recommendation": "Placeholder recommendation used only in tests.",
+					"checked": "2026-11-16"
+				},
+				{
+					"org": "Another Example Org",
+					"url": "https://example.org/guide",
+					"recommendation": "Another placeholder recommendation used only in tests.",
+					"checked": "2026-11-16"
+				}
+			],
+			"fix_hint": "Placeholder fix hint used only in tests."
+		}
+	]
+}

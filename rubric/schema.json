@@ -1,0 +1,215 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Harness rating rubric",
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"version",
+		"sources_version",
+		"evidence_tiers",
+		"levels",
+		"checks"
+	],
+	"properties": {
+		"version": {
+			"type": "string",
+			"pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(\\.(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+		},
+		"sources_version": {
+			"$ref": "#/definitions/date"
+		},
+		"evidence_tiers": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["A", "B", "C"],
+			"properties": {
+				"A": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["min_orgs", "weight"],
+					"properties": {
+						"min_orgs": {
+							"const": 3
+						},
+						"weight": {
+							"const": 10
+						}
+					}
+				},
+				"B": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["min_orgs", "weight"],
+					"properties": {
+						"min_orgs": {
+							"const": 2
+						},
+						"weight": {
+							"const": 7.5
+						}
+					}
+				},
+				"C": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["min_orgs", "weight"],
+					"properties": {
+						"min_orgs": {
+							"const": 1
+						},
+						"weight": {
+							"const": 5
+						}
+					}
+				}
+			}
+		},
+		"levels": {
+			"type": "object",
+			"minProperties": 1,
+			"additionalProperties": false,
+			"patternProperties": {
+				"^L[0-4]$": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["requires"],
+					"properties": {
+						"requires": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/requirement"
+							}
+						}
+					}
+				}
+			}
+		},
+		"checks": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"$ref": "#/definitions/check"
+			}
+		}
+	},
+	"definitions": {
+		"text": {
+			"type": "string",
+			"pattern": "\\S"
+		},
+		"date": {
+			"type": "string",
+			"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+		},
+		"requirement": {
+			"oneOf": [
+				{
+					"$ref": "#/definitions/text"
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["any_of"],
+					"properties": {
+						"any_of": {
+							"$ref": "#/definitions/requirementGroup"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["all_of"],
+					"properties": {
+						"all_of": {
+							"$ref": "#/definitions/requirementGroup"
+						}
+					}
+				}
+			]
+		},
+		"requirementGroup": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"$ref": "#/definitions/requirement"
+			}
+		},
+		"source": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["org", "url", "recommendation", "checked"],
+			"properties": {
+				"org": {
+					"$ref": "#/definitions/text"
+				},
+				"url": {
+					"type": "string",
+					"pattern": "^https?://[^\\s/]+[^\\s]*$"
+				},
+				"recommendation": {
+					"$ref": "#/definitions/text"
+				},
+				"checked": {
+					"$ref": "#/definitions/date"
+				}
+			}
+		},
+		"check": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"id",
+				"dimension",
+				"title",
+				"tier",
+				"check",
+				"supported_by",
+				"sources",
+				"fix_hint"
+			],
+			"properties": {
+				"id": {
+					"$ref": "#/definitions/text"
+				},
+				"dimension": {
+					"$ref": "#/definitions/text"
+				},
+				"title": {
+					"$ref": "#/definitions/text"
+				},
+				"tier": {
+					"enum": ["A", "B", "C"]
+				},
+				"check": {
+					"$ref": "#/definitions/text"
+				},
+				"params": {
+					"type": "object"
+				},
+				"applies_when": {
+					"$ref": "#/definitions/text"
+				},
+				"supported_by": {
+					"type": "array",
+					"minItems": 1,
+					"uniqueItems": true,
+					"items": {
+						"type": "string",
+						"pattern": "\\S"
+					}
+				},
+				"sources": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"$ref": "#/definitions/source"
+					}
+				},
+				"fix_hint": {
+					"$ref": "#/definitions/text"
+				}
+			}
+		}
+	}
+}
