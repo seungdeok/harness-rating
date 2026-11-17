@@ -2,7 +2,7 @@
 
 - Status: Draft
 - Version: 0.1
-- Last updated: 2026-11-16
+- Last updated: 2026-11-17
 
 This is the normative spec for `harness-rating`. It changes only through an ADR; see [`docs/adr/README.md`](../adr/README.md).
 
@@ -58,7 +58,7 @@ From v0.2, `--include-user` also reads known global paths and reports a separate
 - The 14 [level checks](#level-checks)
 - Output: terminal summary and JSON
 - Gate: `--min-level` only
-- Agents: Claude Code and `AGENTS.md`
+- Agents: Claude Code and `AGENTS.md` (including Codex project config; see [ADR 0001](../adr/0001-agents-md-adapter-reads-codex-config.md))
 
 ### Later versions
 
@@ -150,7 +150,7 @@ A level is reached when **all of its required checks pass**, together with those
 
 ### Capped checks
 
-A check whose rubric `supported_by` does not include the detected agent is reported as **capped**, not failed. This separates "the harness is missing something" from "the tool does not support this agent yet". A level whose requirements cannot be met only because of capped checks is shown as capped, naming the check. For example, a repository with only `AGENTS.md` can reach L3 through F1, and shows L4 as "capped: E1 cannot be evaluated for this agent" until an adapter supports E1.
+A check whose rubric `supported_by` does not include the detected agent is reported as **capped**, not failed. This separates "the harness is missing something" from "the tool does not support this agent yet". A level whose requirements cannot be met only because of capped checks is shown as capped, naming the check. For example, a repository whose only agent has no adapter support for E1 can reach L3 through F1, and shows L4 as "capped: E1 cannot be evaluated for this agent".
 
 ## Reference score
 

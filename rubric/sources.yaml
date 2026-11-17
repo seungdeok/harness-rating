@@ -1,0 +1,69 @@
+# Fixed list of source documents; rules in docs/spec/SPEC.md#source-rules.
+# `author` and `published` are null when the page does not show them.
+# `archive` is the copy that was read when `url` blocks automated clients.
+version: 2026-11-17
+
+sources:
+  - org: martinfowler.com
+    title: Harness engineering for coding agent users
+    url: https://martinfowler.com/articles/harness-engineering.html
+    author: Birgitta Böckeler
+    published: 2026-04-02
+    checked: 2026-11-17
+
+  - org: OpenAI
+    title: "Harness engineering: leveraging Codex in an agent-first world"
+    url: https://openai.com/index/harness-engineering/
+    author: Ryan Lopopolo
+    published: 2026-02-11
+    checked: 2026-11-17
+    archive: https://web.archive.org/web/20261116154852/https://openai.com/index/harness-engineering/
+
+  - org: Anthropic
+    title: Best practices for Claude Code
+    url: https://code.claude.com/docs/en/best-practices
+    author: null
+    published: null
+    checked: 2026-11-17
+
+  - org: Anthropic
+    title: How Claude remembers your project
+    url: https://code.claude.com/docs/en/memory
+    author: null
+    published: null
+    checked: 2026-11-17
+
+  - org: Anthropic
+    title: Automate actions with hooks
+    url: https://code.claude.com/docs/en/hooks-guide
+    author: null
+    published: null
+    checked: 2026-11-17
+
+  - org: Google
+    title: Practical Harness Engineering with Google Antigravity
+    url: https://codelabs.developers.google.com/harness-engineering-antigravity
+    author: null
+    published: null
+    checked: 2026-11-17
+
+  - org: Google
+    title: "Agent Factory recap: Agent harnesses, shifting left, and autonomous coding"
+    url: https://cloud.google.com/blog/topics/developers-practitioners/agent-factory-recap-agent-harnesses-shifting-left-and-autonomous-coding
+    author: Mollie Pettit, Smitha Kolan
+    published: 2026-09-25
+    checked: 2026-11-17
+
+  - org: Google
+    title: CLI best practices (Antigravity CLI)
+    url: https://www.antigravity.google/docs/cli/best-practices
+    author: null
+    published: null
+    checked: 2026-11-17
+
+  - org: xAI
+    title: AGENTS.md (Grok Build project rules)
+    url: https://docs.x.ai/build/features/project-rules
+    author: null
+    published: null
+    checked: 2026-11-17
