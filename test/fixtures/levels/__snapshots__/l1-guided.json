@@ -1,0 +1,99 @@
+{
+  "version": "<package>",
+  "rubric": {
+    "version": "0.1.0",
+    "sources_version": "2026-11-17"
+  },
+  "agents": [
+    "agents-md"
+  ],
+  "level": 1,
+  "score": 41.666666666666664,
+  "next": {
+    "level": 2,
+    "status": "unmet",
+    "requirements": [
+      {
+        "requirement": "C1",
+        "status": "unmet"
+      },
+      {
+        "requirement": {
+          "any_of": [
+            "C2",
+            "C3"
+          ]
+        },
+        "status": "unmet"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "A1",
+      "status": "pass"
+    },
+    {
+      "id": "A2",
+      "status": "pass"
+    },
+    {
+      "id": "A3",
+      "status": "pass"
+    },
+    {
+      "id": "A4",
+      "status": "pass"
+    },
+    {
+      "id": "C1",
+      "status": "fail",
+      "detail": "no test files found"
+    },
+    {
+      "id": "C2",
+      "status": "fail",
+      "detail": "no linter configuration found"
+    },
+    {
+      "id": "C3",
+      "status": "na"
+    },
+    {
+      "id": "D1",
+      "status": "fail",
+      "detail": "no agent hooks"
+    },
+    {
+      "id": "D2",
+      "status": "fail",
+      "detail": "no hook runs a test or lint script defined in the repository"
+    },
+    {
+      "id": "E1",
+      "status": "fail",
+      "detail": "no review skill or subagent"
+    },
+    {
+      "id": "F1",
+      "status": "fail",
+      "detail": "no supported pre-commit configuration"
+    },
+    {
+      "id": "F2",
+      "status": "fail",
+      "detail": "no GitHub Actions workflow runs both test and lint scripts"
+    },
+    {
+      "id": "F3",
+      "status": "fail",
+      "detail": "no supported drift sensor configuration"
+    },
+    {
+      "id": "F4",
+      "status": "fail",
+      "detail": "no GitHub Actions workflow has an on.schedule cron trigger"
+    }
+  ],
+  "scan_errors": []
+}

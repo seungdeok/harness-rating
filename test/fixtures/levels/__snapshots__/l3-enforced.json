@@ -1,0 +1,103 @@
+{
+  "version": "<package>",
+  "rubric": {
+    "version": "0.1.0",
+    "sources_version": "2026-11-17"
+  },
+  "agents": [
+    "claude-code"
+  ],
+  "level": 3,
+  "score": 75,
+  "next": {
+    "level": 4,
+    "status": "unmet",
+    "requirements": [
+      {
+        "requirement": "A2",
+        "status": "met"
+      },
+      {
+        "requirement": "A4",
+        "status": "met"
+      },
+      {
+        "requirement": "E1",
+        "status": "unmet"
+      },
+      {
+        "requirement": {
+          "any_of": [
+            "F3",
+            "F4"
+          ]
+        },
+        "status": "unmet"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "A1",
+      "status": "pass"
+    },
+    {
+      "id": "A2",
+      "status": "pass"
+    },
+    {
+      "id": "A3",
+      "status": "pass"
+    },
+    {
+      "id": "A4",
+      "status": "pass"
+    },
+    {
+      "id": "C1",
+      "status": "pass"
+    },
+    {
+      "id": "C2",
+      "status": "pass"
+    },
+    {
+      "id": "C3",
+      "status": "na"
+    },
+    {
+      "id": "D1",
+      "status": "pass"
+    },
+    {
+      "id": "D2",
+      "status": "pass",
+      "detail": ".claude/settings.json Stop: npm test"
+    },
+    {
+      "id": "E1",
+      "status": "fail",
+      "detail": "no review skill or subagent"
+    },
+    {
+      "id": "F1",
+      "status": "fail",
+      "detail": "no supported pre-commit configuration"
+    },
+    {
+      "id": "F2",
+      "status": "pass"
+    },
+    {
+      "id": "F3",
+      "status": "fail",
+      "detail": "no supported drift sensor configuration"
+    },
+    {
+      "id": "F4",
+      "status": "fail",
+      "detail": "no GitHub Actions workflow has an on.schedule cron trigger"
+    }
+  ],
+  "scan_errors": []
+}

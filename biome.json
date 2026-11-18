@@ -1,5 +1,8 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.6.8/schema.json",
+	"files": {
+		"includes": ["**", "!test/fixtures/levels/__snapshots__"]
+	},
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
