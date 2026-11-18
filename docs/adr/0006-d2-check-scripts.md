@@ -1,4 +1,4 @@
-# ADR 0005: D2 counts a hook only when it runs a check entry point defined in the repository
+# ADR 0006: D2 counts a hook only when it runs a check entry point defined in the repository
 
 - Status: Accepted
 - Date: 2026-11-18

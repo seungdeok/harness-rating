@@ -8,7 +8,7 @@ The spec in [`docs/spec/`](../spec/SPEC.md) changes only through an ADR.
 
 ## Files
 
-- Name: `NNNN-short-title.md`, numbered in order (`0001-...`, `0002-...`).
+- Name: `NNNN-short-title.md`, numbered in order (`0001-...`, `0002-...`). If parallel branches pick the same number, the branch merged later takes the next free one; `test/adr.test.ts` fails on duplicates or gaps.
 - An accepted ADR is not edited. To change a decision, write a new ADR and set the old one's status to `Superseded by NNNN`.
 
 ## Template

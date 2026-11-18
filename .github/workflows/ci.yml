@@ -31,10 +31,12 @@ jobs:
       - if: matrix.node == 24
         run: npm run typecheck
       - if: matrix.node == 24
-        run: npx biome ci
+        run: npm run lint
       - run: npm run validate:rubric
       - if: matrix.node == 24
         run: npm run check:rubric-docs
       - run: npm test
       - run: npm run build
       - run: node dist/cli.js --version
+      # Dogfood: this repository must keep its own harness at L4.
+      - run: node dist/cli.js --min-level 4 .
