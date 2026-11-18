@@ -57,12 +57,3 @@ body:
       description: What the check should detect, how, and with which parameters.
     validations:
       required: true
-  - type: checkboxes
-    id: source-rules
-    attributes:
-      label: Source rules
-      options:
-        - label: The source is an accepted document type under the spec's source rules.
-          required: true
-        - label: The quoted sentence is an explicit recommendation, not a feature description or a report of the author's own practice.
-          required: true
