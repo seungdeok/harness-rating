@@ -146,6 +146,7 @@ A level is reached when **all of its required checks pass**, together with those
 | L3 | Enforced | F2, and (D1 and D2) or F1 | Anthropic: use hooks for things that must happen every time. Böckeler: run fast checks before commit |
 | L4 | Sustained | A2, A4, E1, and F3 or F4 | Anthropic: prune the instruction file regularly and use independent review. Böckeler: continuous drift sensors. OpenAI: recurring cleanup jobs |
 
+- **Not-applicable checks drop out of level requirements.** A required check that does not apply is skipped, and an `any_of` falls back to its applicable alternatives: in a repository with no type-checkable language, L2 requires C1 and C2. See [ADR 0004](../adr/0004-not-applicable-checks-in-levels.md).
 - **The gate is the level alone**, through `--min-level`. Letting each organization use different thresholds would make results incomparable.
 - **These levels are defined by this tool.** They are not an industry standard. They are a different axis from autonomy models such as Dan Shapiro's Five Levels.
 

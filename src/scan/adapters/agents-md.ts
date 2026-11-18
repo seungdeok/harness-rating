@@ -1,5 +1,5 @@
-import { scanAgent } from "../agent.js";
-import type { Repo } from "../walk.js";
+import { scanAgent } from "../agent.ts";
+import type { Repo } from "../walk.ts";
 
 // AGENTS.md plus Codex project config (ADR 0001).
 // ponytail: inline [hooks] in .codex/config.toml is not read; runtime deps are YAML and JSON only.

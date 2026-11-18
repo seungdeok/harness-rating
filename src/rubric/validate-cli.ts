@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { parseDocument } from "yaml";
-import { validateRubric } from "./validate.ts";
+import { parseRubricFile } from "./load.ts";
 
 let files = process.argv.slice(2);
 if (files.length === 0) {
@@ -27,14 +26,7 @@ if (files.length === 0) {
 
 for (const file of files) {
 	try {
-		const document = parseDocument(readFileSync(resolve(file), "utf8"), {
-			version: "1.2",
-			uniqueKeys: true,
-		});
-		const problems = [...document.errors, ...document.warnings];
-		if (problems.length > 0)
-			throw new Error(problems.map((problem) => problem.message).join("\n"));
-		const result = validateRubric(document.toJS({ maxAliasCount: 100 }));
+		const result = parseRubricFile(resolve(file));
 		if (!result.valid) {
 			console.error(`${file}:\n${result.errors.join("\n")}`);
 			process.exitCode = 1;

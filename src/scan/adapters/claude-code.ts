@@ -1,5 +1,5 @@
-import { scanAgent } from "../agent.js";
-import type { Repo } from "../walk.js";
+import { scanAgent } from "../agent.ts";
+import type { Repo } from "../walk.ts";
 
 // Project-scope paths only: settings.local.json and CLAUDE.local.md are personal and gitignored.
 // ponytail: root .claude/ only; nested <subdir>/.claude/skills (monorepos) waits for A5/A6 in v0.2.
