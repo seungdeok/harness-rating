@@ -110,7 +110,7 @@ Check selection rules:
 | C2 | computational sensors | A linter is configured | Linter config files |
 | C3 | computational sensors | Type checking is configured | Type checker config for TypeScript and Python; passes for compiler-checked languages; not applicable without a type-checkable language ([ADR 0005](../adr/0005-type-checkable-languages.md)) |
 | D1 | enforcement | Agent hooks are configured | `hooks` entries in agent settings |
-| D2 | enforcement | A hook runs a check | A hook command invokes a test or lint script **that exists in the repository**, not merely a command containing a keyword ([ADR 0005](../adr/0005-d2-check-scripts.md)) |
+| D2 | enforcement | A hook runs a check | A hook command invokes a test or lint script **that exists in the repository**, not merely a command containing a keyword ([ADR 0006](../adr/0006-d2-check-scripts.md)) |
 | E1 | inferential sensors | An independent review step exists | A skill or subagent defined for review |
 | F1 | timing | A pre-commit check exists | Pre-commit configuration |
 | F2 | timing | CI runs tests and lint | Workflow files that run both |
