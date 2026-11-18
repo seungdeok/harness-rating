@@ -17,6 +17,6 @@ Include the affected version, the steps or a minimal repository layout that repr
 - reading files outside the scanned repository, for example through symbolic links or `..` paths
 - executing code from the scanned repository
 - making network requests or sending data anywhere during a scan
-- reading the contents of files above the size cap, or exhausting memory or CPU on crafted input
+- reading the contents of files above the size limit, or exhausting memory or CPU with a specially crafted repository
 
-A harness that games a check to reach a higher level is a known limitation (see [Limitations](docs/spec/SPEC.md#limitations)), not a vulnerability. Report it as a [false positive](https://github.com/seungdeok/harness-rating/issues/new?template=false-positive.yml).
+A repository set up to pass a check without meeting its intent (for example, a hook that runs an empty test script) is a known limitation (see [Limitations](docs/spec/SPEC.md#limitations)), not a vulnerability. Report it as a [false positive](https://github.com/seungdeok/harness-rating/issues/new?template=false-positive.yml).

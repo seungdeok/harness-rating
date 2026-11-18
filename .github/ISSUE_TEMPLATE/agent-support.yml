@@ -1,5 +1,5 @@
 name: Agent support
-description: Request support for another coding agent, or for config an existing adapter does not read.
+description: Request support for another coding agent, or for agent settings this tool does not read yet.
 title: "scan: support <agent>"
 labels: ["type:feat", "area:scan"]
 body:
@@ -21,7 +21,7 @@ body:
     id: checks
     attributes:
       label: Checks this would affect
-      description: Check IDs that are currently capped or failed for this agent.
+      description: IDs of checks the report marks as failed, or as "capped" (cannot be evaluated for this agent yet).
       placeholder: D1, D2, E1
   - type: textarea
     id: example
