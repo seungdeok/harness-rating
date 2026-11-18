@@ -1,4 +1,4 @@
-import { type Repo, readText } from "./walk.js";
+import { type Repo, readText } from "./walk.ts";
 
 export type AgentId = "claude-code" | "agents-md";
 

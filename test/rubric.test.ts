@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import type { Requirement, Rubric, RubricCheck } from "../src/rubric/types.js";
-import { validateRubric } from "../src/rubric/validate.js";
+import type { Requirement, Rubric, RubricCheck } from "../src/rubric/types.ts";
+import { validateRubric } from "../src/rubric/validate.ts";
 
 const fixture = JSON.parse(
 	readFileSync(

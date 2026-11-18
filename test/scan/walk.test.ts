@@ -10,7 +10,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, expect, test } from "vitest";
-import { MAX_FILE_SIZE, readText, walk } from "../../src/scan/walk.js";
+import { MAX_FILE_SIZE, readText, walk } from "../../src/scan/walk.ts";
 
 let tmp: string;
 let root: string;

@@ -2,8 +2,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterAll, expect, test } from "vitest";
-import { detect } from "../../src/scan/detect.js";
-import { walk } from "../../src/scan/walk.js";
+import { detect } from "../../src/scan/detect.ts";
+import { walk } from "../../src/scan/walk.ts";
 
 const tmp = mkdtempSync(join(tmpdir(), "harness-rating-detect-"));
 afterAll(() => rmSync(tmp, { recursive: true, force: true }));
