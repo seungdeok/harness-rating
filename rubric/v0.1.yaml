@@ -1,0 +1,248 @@
+# Public rubric v0.1. Rules: docs/spec/SPEC.md. Source documents: rubric/sources.yaml.
+# Each `recommendation` is quoted verbatim from the source (ellipses mark cuts).
+version: 0.1.0
+sources_version: 2026-11-17
+
+evidence_tiers:
+  A: { min_orgs: 3, weight: 10 }
+  B: { min_orgs: 2, weight: 7.5 }
+  C: { min_orgs: 1, weight: 5 }
+
+levels:
+  L1: { requires: [A1, A3] }
+  L2: { requires: [C1, { any_of: [C2, C3] }] }
+  L3: { requires: [F2, { any_of: [{ all_of: [D1, D2] }, F1] }] }
+  L4: { requires: [A2, A4, E1, { any_of: [F3, F4] }] }
+
+checks:
+  - id: A1
+    dimension: guides
+    title: An agent instruction file exists
+    tier: A
+    check: instruction-file-exists
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/memory
+        recommendation: "Create this file and add instructions that apply to anyone working on the project: build and test commands, coding standards, architectural decisions, naming conventions, and common workflows."
+        checked: 2026-11-17
+      - org: Google
+        url: https://www.antigravity.google/docs/cli/best-practices
+        recommendation: "Create a GEMINI.md or AGENTS.md file at your workspace root to outline specific directory standards, styling paradigms, test command parameters, and deprecation warnings."
+        checked: 2026-11-17
+      - org: xAI
+        url: https://docs.x.ai/build/features/project-rules
+        recommendation: "Put coding conventions, build and test commands, and architecture notes in an `AGENTS.md` at your repo root, and Grok follows them without being told each session."
+        checked: 2026-11-17
+    fix_hint: Add an AGENTS.md or CLAUDE.md at the repository root.
+
+  - id: A2
+    dimension: guides
+    title: The instruction file is short
+    tier: A
+    check: instruction-file-length
+    # Anthropic's number. OpenAI describes its own file as "roughly 100 lines" (practice, not a target).
+    params: { max_lines: 200 }
+    applies_when: has-instruction-file
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/memory
+        recommendation: "Size: target under 200 lines per CLAUDE.md file. Longer files consume more context and reduce adherence."
+        checked: 2026-11-17
+      - org: Google
+        url: https://codelabs.developers.google.com/harness-engineering-antigravity
+        recommendation: "Keep always-on instructions in AGENTS.md short."
+        checked: 2026-11-17
+      - org: OpenAI
+        url: https://openai.com/index/harness-engineering/
+        recommendation: "give Codex a map, not a 1,000-page instruction manual."
+        checked: 2026-11-17
+      - org: xAI
+        url: https://docs.x.ai/build/features/project-rules
+        recommendation: "short, specific instructions are followed more reliably than long ones."
+        checked: 2026-11-17
+    fix_hint: Move details the agent needs only sometimes into linked docs or skills, and keep the instruction file under the line cap.
+
+  - id: A3
+    dimension: guides
+    title: Build and test commands are documented
+    tier: A
+    check: instruction-file-commands
+    applies_when: has-instruction-file
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "If your repo already has one of these, the single most useful line in your `CLAUDE.md` is the command that runs it."
+        checked: 2026-11-17
+      - org: Google
+        url: https://www.antigravity.google/docs/cli/best-practices
+        recommendation: "Create a GEMINI.md or AGENTS.md file at your workspace root to outline specific directory standards, styling paradigms, test command parameters, and deprecation warnings."
+        checked: 2026-11-17
+      - org: xAI
+        url: https://docs.x.ai/build/features/project-rules
+        recommendation: "Put coding conventions, build and test commands, and architecture notes in an `AGENTS.md` at your repo root, and Grok follows them without being told each session."
+        checked: 2026-11-17
+    fix_hint: Add the exact build, test, and lint commands to the instruction file, in a code block.
+
+  - id: A4
+    dimension: guides
+    title: Referenced files exist
+    tier: B
+    check: instruction-file-references
+    applies_when: has-instruction-file
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Google
+        url: https://codelabs.developers.google.com/harness-engineering-antigravity
+        recommendation: "List your coding conventions, explain how the repo and its folders are structured so the agent can figure out how to navigate the codebase, and point to deeper files for details."
+        checked: 2026-11-17
+      - org: OpenAI
+        url: https://openai.com/index/harness-engineering/
+        recommendation: "give Codex a map, not a 1,000-page instruction manual."
+        checked: 2026-11-17
+    fix_hint: Fix or remove links and @ imports in the instruction file that point to files missing from the repository.
+
+  - id: C1
+    dimension: computational-sensors
+    title: A test suite and a command to run it exist
+    tier: B
+    check: test-suite
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "Give Claude something it can run that comes back pass or fail."
+        checked: 2026-11-17
+      - org: Google
+        url: https://www.antigravity.google/docs/cli/best-practices
+        recommendation: "Ensure your workspace directory has a test suite ready."
+        checked: 2026-11-17
+    fix_hint: Add a test suite and a script that runs it, such as `npm test`, `pytest`, `go test ./...`, or `cargo test`.
+
+  - id: C2
+    dimension: computational-sensors
+    title: A linter is configured
+    tier: C
+    check: linter-config
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "Give Claude something it can run that comes back pass or fail. … The check can be almost anything, as long as Claude can read the result: … A linter"
+        checked: 2026-11-17
+    fix_hint: Add a linter configuration, such as Biome, ESLint, Ruff, golangci-lint, or Clippy.
+
+  - id: C3
+    dimension: computational-sensors
+    title: Type checking is configured
+    tier: C
+    check: type-check-config
+    applies_when: has-type-checkable-language
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "Give Claude something it can run that comes back pass or fail. … Notice that the typecheck line is only the command. Claude needs to know the command so it can check its own work as it goes."
+        checked: 2026-11-17
+    fix_hint: Add type checker configuration, such as tsconfig.json or mypy/pyright settings, and a script that runs it.
+
+  - id: D1
+    dimension: enforcement
+    title: Agent hooks are configured
+    tier: C
+    check: agent-hooks
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "If something has to happen every time, make it a hook, a deny rule, or a managed setting."
+        checked: 2026-11-17
+    fix_hint: Add hooks to .claude/settings.json or .codex/hooks.json.
+
+  - id: D2
+    dimension: enforcement
+    title: A hook runs a check
+    tier: C
+    check: hook-runs-check
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "If you also want Claude Code to enforce a passing typecheck before Claude finishes, that's a job for a `Stop` hook."
+        checked: 2026-11-17
+    fix_hint: Make a hook call a test, lint, or typecheck script that exists in the repository, for example on Stop or PostToolUse.
+
+  - id: E1
+    dimension: inferential-sensors
+    title: An independent review step exists
+    tier: C
+    check: review-step
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: Anthropic
+        url: https://code.claude.com/docs/en/best-practices
+        recommendation: "Give a custom subagent in `.claude/agents/` only `tools: Read, Grep, Glob`. Now it's a reviewer that can't edit anything, and that limit is enforced by Claude Code rather than requested in a prompt."
+        checked: 2026-11-17
+    fix_hint: Define a review subagent (.claude/agents/ or .codex/agents/) or a review skill (.claude/skills/ or .agents/skills/).
+
+  - id: F1
+    dimension: timing
+    title: A pre-commit check exists
+    tier: B
+    check: pre-commit
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: martinfowler.com
+        url: https://martinfowler.com/articles/harness-engineering.html
+        recommendation: "You want to have checks as far left in the path to production as possible, since the earlier you find issues, the cheaper they are to fix."
+        checked: 2026-11-17
+      - org: Google
+        url: https://codelabs.developers.google.com/harness-engineering-antigravity
+        recommendation: "Instruct the agent to write and run tests before committing."
+        checked: 2026-11-17
+    fix_hint: Run fast checks before each commit with husky, lefthook, or the pre-commit framework.
+
+  - id: F2
+    dimension: timing
+    title: CI runs tests and lint
+    tier: B
+    check: ci-tests-and-lint
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: martinfowler.com
+        url: https://martinfowler.com/articles/harness-engineering.html
+        recommendation: "What is more expensive and should therefore only be run post-integration in the pipeline, in addition to a repetition of the fast controls?"
+        checked: 2026-11-17
+      - org: OpenAI
+        url: https://learn.chatgpt.com/docs/agent-configuration/agents-md
+        recommendation: "Keep rules concise, explain the behavior to flag and any safe path or exception, and reserve formatting and lint checks for CI."
+        checked: 2026-11-17
+    fix_hint: Add a CI workflow that runs both the test script and the lint script.
+
+  - id: F3
+    dimension: timing
+    title: A drift sensor exists
+    tier: C
+    check: drift-sensor
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: martinfowler.com
+        url: https://martinfowler.com/articles/harness-engineering.html
+        recommendation: "What type of drift accumulates gradually and should be monitored by sensors running continuously against the codebase, outside the change lifecycle? (e.g. dead code detection, analysis of the quality of the test coverage, dependency scanners)"
+        checked: 2026-11-17
+    fix_hint: Add a dependency scanner (Dependabot, Renovate), dead-code detection, or coverage configuration.
+
+  - id: F4
+    dimension: timing
+    title: A scheduled cleanup job exists
+    tier: C
+    check: scheduled-workflow
+    supported_by: [claude-code, agents-md]
+    sources:
+      - org: OpenAI
+        url: https://openai.com/index/harness-engineering/
+        recommendation: "Technical debt is like a high-interest loan: it’s almost always better to pay it down continuously in small increments than to let it compound and tackle it in painful bursts."
+        checked: 2026-11-17
+    fix_hint: Add a scheduled CI workflow (`on.schedule`) that runs cleanup or drift checks.

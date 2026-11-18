@@ -19,6 +19,13 @@ sources:
     checked: 2026-11-17
     archive: https://web.archive.org/web/20261116154852/https://openai.com/index/harness-engineering/
 
+  - org: OpenAI
+    title: Custom instructions with AGENTS.md (Codex docs)
+    url: https://learn.chatgpt.com/docs/agent-configuration/agents-md
+    author: null
+    published: null
+    checked: 2026-11-17
+
   - org: Anthropic
     title: Best practices for Claude Code
     url: https://code.claude.com/docs/en/best-practices
