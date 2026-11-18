@@ -113,6 +113,6 @@ function readHooks(repo: Repo, path: string, errors: ScanError[]): Hook[] {
 	return hooks;
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
+export function isObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
