@@ -1,0 +1,30 @@
+name: Agent support
+description: Request support for another coding agent, or for agent settings this tool does not read yet.
+title: "scan: support <agent>"
+labels: ["type:feat", "area:scan"]
+body:
+  - type: input
+    id: agent
+    attributes:
+      label: Agent
+      placeholder: Gemini CLI
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Project config files
+      description: Which committed files the agent reads (instruction files, settings, hooks, skills, subagents), with a link to the official documentation for each.
+    validations:
+      required: true
+  - type: input
+    id: checks
+    attributes:
+      label: Checks this would affect
+      description: IDs of checks the report marks as failed, or as "capped" (cannot be evaluated for this agent yet).
+      placeholder: D1, D2, E1
+  - type: textarea
+    id: example
+    attributes:
+      label: Example repository
+      description: A public repository that uses this agent's project config, if you know one.

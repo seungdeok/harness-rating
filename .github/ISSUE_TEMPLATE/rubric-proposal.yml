@@ -1,0 +1,59 @@
+name: Rubric proposal
+description: Add, change, or remove a check, a source, or a detection parameter.
+title: "rubric: <summary>"
+labels: ["area:rubric"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every rubric change must rest on an explicit recommendation in a primary source. Read the spec's [source rules](https://github.com/seungdeok/harness-rating/blob/main/docs/spec/SPEC.md#source-rules) before filling this in.
+  - type: dropdown
+    id: change
+    attributes:
+      label: Change type
+      options:
+        - Add a check
+        - Change a check or detection parameter
+        - Remove a check
+        - Add or remove a source
+        - Change level requirements
+    validations:
+      required: true
+  - type: input
+    id: check
+    attributes:
+      label: Check ID
+      description: Existing check ID, or "new".
+      placeholder: A2
+    validations:
+      required: true
+  - type: input
+    id: source-url
+    attributes:
+      label: Primary-source URL
+      description: The page that contains the recommendation.
+      placeholder: https://
+    validations:
+      required: true
+  - type: input
+    id: org
+    attributes:
+      label: Organization
+      description: The organization that published the source.
+    validations:
+      required: true
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recommendation sentence
+      description: Quote the sentence exactly as it appears in the source. It must say what to do, not only describe a feature.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What the check should detect, how, and with which parameters.
+    validations:
+      required: true

@@ -1,0 +1,58 @@
+name: False positive / negative
+description: A check passed or failed when it should not have.
+title: "checks: <check ID> <summary>"
+labels: ["type:bug", "area:checks"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What went wrong
+      options:
+        - False positive (passed but should fail)
+        - False negative (failed but should pass)
+    validations:
+      required: true
+  - type: input
+    id: check
+    attributes:
+      label: Check ID
+      description: The ID shown next to the check in the report.
+      placeholder: A3
+    validations:
+      required: true
+  - type: textarea
+    id: layout
+    attributes:
+      label: Repository layout
+      description: A public repository URL, or the minimal files and contents that reproduce the result. Do not paste secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result and why
+      description: Link the spec's check definition or the source recommendation that supports your expectation.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual output
+      description: Paste the terminal output or the relevant part of the JSON report.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: cli-version
+    attributes:
+      label: CLI version
+      placeholder: harness-rating v0.1.0
+    validations:
+      required: true
+  - type: input
+    id: rubric-version
+    attributes:
+      label: Rubric version
+      placeholder: rubric v0.1.0
+    validations:
+      required: true
