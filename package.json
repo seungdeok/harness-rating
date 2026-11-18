@@ -22,6 +22,8 @@
 		"test": "npm run generate:rubric-validator && vitest run",
 		"validate:rubric": "npm run generate:rubric-validator && node src/rubric/validate-cli.ts",
 		"generate:rubric-validator": "node scripts/compile-rubric-schema.mjs",
+		"generate:rubric-docs": "npm run generate:rubric-validator && node scripts/gen-rubric-docs.ts",
+		"check:rubric-docs": "npm run generate:rubric-validator && node scripts/gen-rubric-docs.ts --check",
 		"prepack": "npm run build"
 	},
 	"devDependencies": {

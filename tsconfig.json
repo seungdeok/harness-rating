@@ -11,5 +11,5 @@
 		"noEmit": true,
 		"rewriteRelativeImportExtensions": true
 	},
-	"include": ["src", "test"]
+	"include": ["src", "test", "scripts"]
 }
