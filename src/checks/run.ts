@@ -1,15 +1,19 @@
 import type { Rubric } from "../rubric/types.ts";
 import type { Agent } from "../scan/agent.ts";
 import type { Repo } from "../scan/walk.ts";
+import { computationalChecks } from "./computational.ts";
 import { enforcementChecks } from "./enforcement.ts";
 import { guideChecks } from "./guides.ts";
+import { timingChecks } from "./timing.ts";
 import type { Check, CheckOutcome } from "./types.ts";
 
 export type CheckReport = CheckOutcome | { status: "capped" };
 
 const allChecks: Record<string, Check> = {
 	...guideChecks,
+	...computationalChecks,
 	...enforcementChecks,
+	...timingChecks,
 };
 
 /**

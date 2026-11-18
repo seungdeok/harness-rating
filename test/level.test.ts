@@ -87,6 +87,14 @@ describe("resolveLevel", () => {
 		);
 	});
 
+	test("reports a requirement whose checks are all not applicable as na", () => {
+		const result = resolveLevel(rubric, results({ A1: "fail", A3: "na" }));
+		expect(result.next?.requirements).toEqual([
+			{ requirement: "A1", status: "unmet" },
+			{ requirement: "A3", status: "na" },
+		]);
+	});
+
 	test("throws when a required check has no result", () => {
 		expect(() => resolveLevel(rubric, new Map())).toThrow(
 			/no result for check A1/,

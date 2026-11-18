@@ -10,6 +10,7 @@
 	"files": [
 		"dist",
 		"rubric/schema.json",
+		"rubric/v0.1.yaml",
 		"rubric/validate.cjs"
 	],
 	"engines": {
