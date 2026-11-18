@@ -1,0 +1,11 @@
+name: Checks
+on:
+  push:
+  schedule:
+    - cron: "0 0 * * 0"
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm test
+      - run: npm run lint
