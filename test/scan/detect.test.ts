@@ -1,21 +1,8 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
-import { afterAll, expect, test } from "vitest";
+import { expect, test } from "vitest";
 import { detect } from "../../src/scan/detect.ts";
-import { walk } from "../../src/scan/walk.ts";
+import { makeRepo } from "../support/temp-repo.ts";
 
-const tmp = mkdtempSync(join(tmpdir(), "harness-rating-detect-"));
-afterAll(() => rmSync(tmp, { recursive: true, force: true }));
-
-function scan(files: Record<string, string>) {
-	const root = mkdtempSync(join(tmp, "repo-"));
-	for (const [path, content] of Object.entries(files)) {
-		mkdirSync(dirname(join(root, path)), { recursive: true });
-		writeFileSync(join(root, path), content);
-	}
-	return detect(walk(root));
-}
+const scan = (files: Record<string, string>) => detect(makeRepo(files));
 
 const hooksJson = JSON.stringify({
 	hooks: {
