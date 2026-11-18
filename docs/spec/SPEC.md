@@ -108,7 +108,7 @@ Check selection rules:
 | A4 | guides | Referenced files exist | Markdown links and `@` import paths resolve inside the repository |
 | C1 | computational sensors | A test suite and a command to run it exist | Test config and scripts |
 | C2 | computational sensors | A linter is configured | Linter config files |
-| C3 | computational sensors | Type checking is configured | Type checker config; not applicable without a type-checkable language |
+| C3 | computational sensors | Type checking is configured | Type checker config for TypeScript and Python; passes for compiler-checked languages; not applicable without a type-checkable language ([ADR 0005](../adr/0005-type-checkable-languages.md)) |
 | D1 | enforcement | Agent hooks are configured | `hooks` entries in agent settings |
 | D2 | enforcement | A hook runs a check | A hook command invokes a test or lint script **that exists in the repository**, not merely a command containing a keyword |
 | E1 | inferential sensors | An independent review step exists | A skill or subagent defined for review |
