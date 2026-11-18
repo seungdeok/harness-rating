@@ -78,6 +78,7 @@ The fixed list of source documents lives in `rubric/sources.yaml`. Evidence tier
 What counts as evidence:
 
 - **Only explicit recommendations count.** A sentence counts only if it says what to do ("do X", "we recommend X", "X is followed more reliably"). A sentence that only describes a feature ("X is supported") does not count. The same rule applies to product docs.
+- **A "should" inside a question counts; a report of one's own practice does not.** A guiding question that prescribes ("what should be run before a commit?") counts like a recommendation. A description of what a team did ("we instruct Codex to review its own changes") does not. See [ADR 0003](../adr/0003-counting-question-form-and-practice-reports.md).
 - **Count per organization.** Several documents from one organization count as one.
 - **Derived support does not count.** Support for another organization's convention for compatibility (for example, reading another vendor's instruction file) is not independent evidence.
 - **Silence is not opposition.** A low tier means less agreement, not less importance. That is why levels do not depend on tiers.

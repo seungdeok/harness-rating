@@ -8,12 +8,9 @@ references. Errors identify the check or level, field path, and suggested repair
 npm run validate:rubric
 ```
 
-Issue #6 adds the validator, not the public rubric. Until #7 adds `v0.1.yaml`, this
-script explicitly validates `test/fixtures/rubric/valid.json`, a shape-only example
-with placeholder sources. **When adding the public rubric in #7, remove that
-fixture argument from `validate:rubric` in `package.json`.** Without arguments the
-validator checks every `rubric/*.yaml` and `rubric/*.yml` file except the source
-registry, and fails if no rubric files exist. The registry has a different shape.
+Without arguments the validator checks every `rubric/*.yaml` and `rubric/*.yml` file
+except the source registry (`sources.yaml`, which has a different shape), and fails
+if no rubric files exist. The public rubric is `v0.1.yaml`.
 
 To check specific files:
 
