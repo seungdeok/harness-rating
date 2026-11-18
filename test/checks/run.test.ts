@@ -60,6 +60,10 @@ describe("runChecks", () => {
 		expect(seen).toEqual([{ max_lines: 200 }]);
 	});
 
+	test("implements every check in the public rubric", () => {
+		expect(() => runChecks(base, makeRepo({}), [])).not.toThrow();
+	});
+
 	test("throws for a check with no implementation", () => {
 		expect(() => runChecks(rubric, makeRepo({}), [], {})).toThrow(
 			/no implementation/,

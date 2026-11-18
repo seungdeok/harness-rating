@@ -2,6 +2,12 @@ import { type Repo, readText } from "./walk.ts";
 
 export type AgentId = "claude-code" | "agents-md";
 
+/** Display names for reports. */
+export const AGENT_NAMES: Record<AgentId, string> = {
+	"claude-code": "Claude Code",
+	"agents-md": "AGENTS.md",
+};
+
 export interface Hook {
 	file: string;
 	event: string;

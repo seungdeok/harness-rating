@@ -1,7 +1,17 @@
 import type { CheckResults } from "./checks/types.ts";
 import type { Requirement, Rubric } from "./rubric/types.ts";
 
-export type RequirementStatus = "met" | "unmet" | "capped";
+/** "na" when every check in the requirement is not applicable; it counts as met (ADR 0004). */
+export type RequirementStatus = "met" | "unmet" | "capped" | "na";
+
+/** Level names, defined by SPEC § Levels. Index is the level number. */
+export const LEVEL_NAMES = [
+	"Not configured",
+	"Guided",
+	"Checked",
+	"Enforced",
+	"Sustained",
+] as const;
 
 export interface LevelResult {
 	/** Highest level reached, 0–4. */
@@ -27,7 +37,9 @@ export function resolveLevel(
 			requirement,
 			status: requirementStatus(requirement, results),
 		}));
-		if (requirements.every((r) => r.status === "met")) continue;
+		if (requirements.every((r) => r.status === "met" || r.status === "na")) {
+			continue;
+		}
 		const status = requirements.some((r) => r.status === "unmet")
 			? "unmet"
 			: "capped";
@@ -40,7 +52,9 @@ function requirementStatus(
 	requirement: Requirement,
 	results: CheckResults,
 ): RequirementStatus {
-	if (evaluate(requirement, results, false) !== false) return "met";
+	const value = evaluate(requirement, results, false);
+	if (value === undefined) return "na";
+	if (value) return "met";
 	return evaluate(requirement, results, true) !== false ? "capped" : "unmet";
 }
 
