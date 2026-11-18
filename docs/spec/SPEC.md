@@ -184,11 +184,11 @@ Validity checking tests whether levels relate to real agent performance, so the 
 
 - Pick 8–10 public repositories spread across levels.
 - Define 5 tasks of the same kinds per repository (fix a failing test, add a feature, refactor, and so on).
-- Run each task 3 times with the same model and agent, and measure completion rate.
+- Run each task 3 times with the same model and agent, and measure completion rate. The agent and model are recorded parameters: each configuration is reported separately, and the official study runs two.
 - Compute the rank correlation (Spearman) between level and completion rate.
 - Publish the results as they are, noting that the sample is too small for strong statistical conclusions. If no correlation appears, revisit checks and level placement before release.
 
-Results are published in `docs/validity.md`.
+The protocol is fixed in [ADR 0006](../adr/0006-validity-protocol.md) and written out in [`docs/validity.md`](../validity.md), where results are also published.
 
 ## Rubric data format
 
@@ -285,9 +285,3 @@ Not passed (score only)
 Rubric changes are proposed through the rubric proposal issue form, which requires a primary-source URL and the recommendation. Each change needs a fixture and a test.
 
 A monthly scheduled workflow checks that every source URL is reachable and opens an issue when one breaks.
-
-## Open questions
-
-| Question | Decided in |
-| --- | --- |
-| Validity checking: model, agent, repositories, tasks | #20 |
