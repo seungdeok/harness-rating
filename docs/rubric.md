@@ -5,7 +5,7 @@ Generated from [rubric/v0.1.yaml](../rubric/v0.1.yaml): rubric v0.1.0; sources v
 
 Regenerate with `npm run generate:rubric-docs`; verify with `npm run check:rubric-docs`.
 
-These are static configuration checks, not evidence of effectiveness. Detector identifiers and parameters below come directly from the rubric; see the [specification](spec/SPEC.md#level-checks) for detection rules and [levels](levels.md) for requirements.
+These are static configuration checks, not evidence of effectiveness. Each check explains what is inspected; internal identifiers appear in parentheses for reference. Parameter values and source details come directly from the rubric. See the [specification](spec/SPEC.md#level-checks) for detection rules and [levels](levels.md) for requirements.
 
 Evidence tiers count distinct organizations, not documents. A lower tier means less agreement, not less importance. Only explicit recommendations count; see the [source rules](spec/SPEC.md#source-rules).
 
@@ -19,12 +19,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** An agent instruction file exists
 
-- **Dimension:** guides
+- **Dimension:** Guides
 - **Evidence tier:** A (reference weight 10)
-- **Detection:** `instruction-file-exists`
+- **Detection:** Looks for a supported agent instruction file. (detector: `instruction-file-exists`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add an AGENTS.md or CLAUDE.md at the repository root.
 
 ### Sources
@@ -42,12 +42,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** The instruction file is short
 
-- **Dimension:** guides
+- **Dimension:** Guides
 - **Evidence tier:** A (reference weight 10)
-- **Detection:** `instruction-file-length`
-- **Parameters:** `{"max_lines":200}`
-- **Applies when:** `has-instruction-file`
-- **Supported agents:** `claude-code`, `agents-md`
+- **Detection:** Compares the instruction file's line count with the configured limit. (detector: `instruction-file-length`)
+- **Parameters:** Maximum instruction-file length: 200 lines. `{"max_lines":200}`
+- **Applies when:** An instruction file is present. (`has-instruction-file`)
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Move details the agent needs only sometimes into linked docs or skills, and keep the instruction file under the line cap.
 
 ### Sources
@@ -68,12 +68,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** Build and test commands are documented
 
-- **Dimension:** guides
+- **Dimension:** Guides
 - **Evidence tier:** A (reference weight 10)
-- **Detection:** `instruction-file-commands`
+- **Detection:** Looks for build and test commands in the instruction file. (detector: `instruction-file-commands`)
 - **Parameters:** None.
-- **Applies when:** `has-instruction-file`
-- **Supported agents:** `claude-code`, `agents-md`
+- **Applies when:** An instruction file is present. (`has-instruction-file`)
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add the exact build, test, and lint commands to the instruction file, in a code block.
 
 ### Sources
@@ -91,12 +91,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** Referenced files exist
 
-- **Dimension:** guides
+- **Dimension:** Guides
 - **Evidence tier:** B (reference weight 7.5)
-- **Detection:** `instruction-file-references`
+- **Detection:** Checks that Markdown links and @ imports resolve to files inside the repository. (detector: `instruction-file-references`)
 - **Parameters:** None.
-- **Applies when:** `has-instruction-file`
-- **Supported agents:** `claude-code`, `agents-md`
+- **Applies when:** An instruction file is present. (`has-instruction-file`)
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Fix or remove links and @ imports in the instruction file that point to files missing from the repository.
 
 ### Sources
@@ -111,12 +111,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** A test suite and a command to run it exist
 
-- **Dimension:** computational-sensors
+- **Dimension:** Computational sensors
 - **Evidence tier:** B (reference weight 7.5)
-- **Detection:** `test-suite`
+- **Detection:** Looks for test configuration and a command to run the test suite. (detector: `test-suite`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add a test suite and a script that runs it, such as \`npm test\`, \`pytest\`, \`go test ./...\`, or \`cargo test\`.
 
 ### Sources
@@ -131,12 +131,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** A linter is configured
 
-- **Dimension:** computational-sensors
+- **Dimension:** Computational sensors
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `linter-config`
+- **Detection:** Looks for linter configuration files. (detector: `linter-config`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add a linter configuration, such as Biome, ESLint, Ruff, golangci-lint, or Clippy.
 
 ### Sources
@@ -148,12 +148,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** Type checking is configured
 
-- **Dimension:** computational-sensors
+- **Dimension:** Computational sensors
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `type-check-config`
+- **Detection:** Looks for type-checker configuration. (detector: `type-check-config`)
 - **Parameters:** None.
-- **Applies when:** `has-type-checkable-language`
-- **Supported agents:** `claude-code`, `agents-md`
+- **Applies when:** The repository uses a type-checkable language. (`has-type-checkable-language`)
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add type checker configuration, such as tsconfig.json or mypy/pyright settings, and a script that runs it.
 
 ### Sources
@@ -165,12 +165,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** Agent hooks are configured
 
-- **Dimension:** enforcement
+- **Dimension:** Enforcement
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `agent-hooks`
+- **Detection:** Looks for hook entries in the agent's settings. (detector: `agent-hooks`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add hooks to .claude/settings.json or .codex/hooks.json.
 
 ### Sources
@@ -182,12 +182,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** A hook runs a check
 
-- **Dimension:** enforcement
+- **Dimension:** Enforcement
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `hook-runs-check`
+- **Detection:** Checks that a hook invokes a test or lint script that exists in the repository, rather than just mentioning a check-related keyword. (detector: `hook-runs-check`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Make a hook call a test, lint, or typecheck script that exists in the repository, for example on Stop or PostToolUse.
 
 ### Sources
@@ -199,12 +199,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** An independent review step exists
 
-- **Dimension:** inferential-sensors
+- **Dimension:** Inferential sensors
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `review-step`
+- **Detection:** Looks for a skill or subagent defined for independent review. (detector: `review-step`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Define a review subagent (.claude/agents/ or .codex/agents/) or a review skill (.claude/skills/ or .agents/skills/).
 
 ### Sources
@@ -216,12 +216,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** A pre-commit check exists
 
-- **Dimension:** timing
+- **Dimension:** Timing
 - **Evidence tier:** B (reference weight 7.5)
-- **Detection:** `pre-commit`
+- **Detection:** Looks for configuration that runs checks before a commit. (detector: `pre-commit`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Run fast checks before each commit with husky, lefthook, or the pre-commit framework.
 
 ### Sources
@@ -236,12 +236,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** CI runs tests and lint
 
-- **Dimension:** timing
+- **Dimension:** Timing
 - **Evidence tier:** B (reference weight 7.5)
-- **Detection:** `ci-tests-and-lint`
+- **Detection:** Looks for CI workflows that run both tests and lint. (detector: `ci-tests-and-lint`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add a CI workflow that runs both the test script and the lint script.
 
 ### Sources
@@ -256,12 +256,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** A drift sensor exists
 
-- **Dimension:** timing
+- **Dimension:** Timing
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `drift-sensor`
+- **Detection:** Looks for dependency scanning, dead-code detection, or test-coverage configuration. (detector: `drift-sensor`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add a dependency scanner (Dependabot, Renovate), dead-code detection, or coverage configuration.
 
 ### Sources
@@ -273,12 +273,12 @@ Evidence tiers count distinct organizations, not documents. A lower tier means l
 
 **What:** A scheduled cleanup job exists
 
-- **Dimension:** timing
+- **Dimension:** Timing
 - **Evidence tier:** C (reference weight 5)
-- **Detection:** `scheduled-workflow`
+- **Detection:** Looks for a CI workflow with a recurring schedule. (detector: `scheduled-workflow`)
 - **Parameters:** None.
 - **Applies when:** Always.
-- **Supported agents:** `claude-code`, `agents-md`
+- **Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)
 - **How to pass:** Add a scheduled CI workflow (\`on.schedule\`) that runs cleanup or drift checks.
 
 ### Sources

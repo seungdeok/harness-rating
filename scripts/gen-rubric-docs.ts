@@ -5,6 +5,56 @@ import { validateRubric } from "../src/rubric/validate.ts";
 
 const input = "rubric/v0.1.yaml";
 
+// Reader-facing summaries of SPEC's detection rules; IDs and values stay in YAML.
+const detectionDescriptions: Record<string, string> = {
+	"instruction-file-exists": "Looks for a supported agent instruction file.",
+	"instruction-file-length":
+		"Compares the instruction file's line count with the configured limit.",
+	"instruction-file-commands":
+		"Looks for build and test commands in the instruction file.",
+	"instruction-file-references":
+		"Checks that Markdown links and @ imports resolve to files inside the repository.",
+	"test-suite":
+		"Looks for test configuration and a command to run the test suite.",
+	"linter-config": "Looks for linter configuration files.",
+	"type-check-config": "Looks for type-checker configuration.",
+	"agent-hooks": "Looks for hook entries in the agent's settings.",
+	"hook-runs-check":
+		"Checks that a hook invokes a test or lint script that exists in the repository, rather than just mentioning a check-related keyword.",
+	"review-step":
+		"Looks for a skill or subagent defined for independent review.",
+	"pre-commit": "Looks for configuration that runs checks before a commit.",
+	"ci-tests-and-lint": "Looks for CI workflows that run both tests and lint.",
+	"drift-sensor":
+		"Looks for dependency scanning, dead-code detection, or test-coverage configuration.",
+	"scheduled-workflow": "Looks for a CI workflow with a recurring schedule.",
+};
+
+const applicabilityDescriptions: Record<string, string> = {
+	"has-instruction-file": "An instruction file is present.",
+	"has-type-checkable-language":
+		"The repository uses a type-checkable language.",
+};
+
+const agentNames: Record<string, string> = {
+	"claude-code": "Claude Code",
+	"agents-md": "AGENTS.md / Codex",
+};
+
+function description(id: string, descriptions: Record<string, string>): string {
+	const value = descriptions[id];
+	if (!value)
+		throw new Error(
+			`Add a reader-facing description for ${id} before generating docs.`,
+		);
+	return text(value);
+}
+
+function label(id: string): string {
+	const words = id.replace(/[-_]/g, " ");
+	return text(words.charAt(0).toUpperCase() + words.slice(1));
+}
+
 function text(value: string): string {
 	return value
 		.replaceAll("&", "&amp;")
@@ -49,7 +99,7 @@ function header(title: string, rubric: Rubric): string[] {
 function checkDocs(rubric: Rubric): string {
 	const lines = [
 		...header("Rubric", rubric),
-		"These are static configuration checks, not evidence of effectiveness. Detector identifiers and parameters below come directly from the rubric; see the [specification](spec/SPEC.md#level-checks) for detection rules and [levels](levels.md) for requirements.",
+		"These are static configuration checks, not evidence of effectiveness. Each check explains what is inspected; internal identifiers appear in parentheses for reference. Parameter values and source details come directly from the rubric. See the [specification](spec/SPEC.md#level-checks) for detection rules and [levels](levels.md) for requirements.",
 		"",
 		"Evidence tiers count distinct organizations, not documents. A lower tier means less agreement, not less importance. Only explicit recommendations count; see the [source rules](spec/SPEC.md#source-rules).",
 		"",
@@ -61,17 +111,22 @@ function checkDocs(rubric: Rubric): string {
 		"",
 	];
 	for (const check of rubric.checks) {
+		const lineLimit =
+			check.check === "instruction-file-length" &&
+			typeof check.params?.max_lines === "number"
+				? `Maximum instruction-file length: ${check.params.max_lines} lines. `
+				: "";
 		lines.push(
 			`## ${text(check.id)}`,
 			"",
 			`**What:** ${text(check.title)}`,
 			"",
-			`- **Dimension:** ${text(check.dimension)}`,
+			`- **Dimension:** ${label(check.dimension)}`,
 			`- **Evidence tier:** ${check.tier} (reference weight ${rubric.evidence_tiers[check.tier].weight})`,
-			`- **Detection:** ${code(check.check)}`,
-			`- **Parameters:** ${check.params === undefined ? "None." : code(JSON.stringify(check.params))}`,
-			`- **Applies when:** ${check.applies_when === undefined ? "Always." : code(check.applies_when)}`,
-			`- **Supported agents:** ${check.supported_by.map(code).join(", ")}`,
+			`- **Detection:** ${description(check.check, detectionDescriptions)} (detector: ${code(check.check)})`,
+			`- **Parameters:** ${lineLimit}${check.params === undefined ? "None." : code(JSON.stringify(check.params))}`,
+			`- **Applies when:** ${check.applies_when === undefined ? "Always." : `${description(check.applies_when, applicabilityDescriptions)} (${code(check.applies_when)})`}`,
+			`- **Supported agents:** ${check.supported_by.map((agent) => `${agentNames[agent] === undefined ? label(agent) : text(agentNames[agent])} (${code(agent)})`).join(", ")}`,
 			`- **How to pass:** ${text(check.fix_hint)}`,
 			"",
 			"### Sources",

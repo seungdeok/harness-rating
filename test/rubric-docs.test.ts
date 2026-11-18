@@ -105,6 +105,63 @@ test("the committed docs match the public rubric", () => {
 	expect(result.status).toBe(0);
 });
 
+test("explains detection and applicability before showing internal identifiers", () => {
+	const cwd = directory();
+	expect(run(cwd).status).toBe(0);
+	const checks = docs(cwd)[0] ?? "";
+	for (const check of rubric.checks) {
+		expect(checks).not.toContain(`**Detection:** \`${check.check}\``);
+		expect(checks).toContain(`(detector: \`${check.check}\`)`);
+	}
+	expect(checks).toContain(
+		"**Detection:** Compares the instruction file's line count with the configured limit.",
+	);
+	expect(checks).toContain("Maximum instruction-file length: 200 lines.");
+	expect(checks).toContain(
+		"**Applies when:** An instruction file is present. (`has-instruction-file`)",
+	);
+	expect(checks).toContain(
+		"**Applies when:** The repository uses a type-checkable language. (`has-type-checkable-language`)",
+	);
+	expect(checks).toContain("**Dimension:** Computational sensors");
+	expect(checks).toContain(
+		"**Supported agents:** Claude Code (`claude-code`), AGENTS.md / Codex (`agents-md`)",
+	);
+});
+
+test("uses the YAML parameter value in the reader-facing line limit", () => {
+	const cwd = directory();
+	const changed = structuredClone(rubric);
+	const check = changed.checks.find((item) => item.id === "A2");
+	assert.ok(check);
+	check.params = { max_lines: 150 };
+	writeFileSync(join(cwd, "rubric/v0.1.yaml"), stringify(changed));
+	expect(run(cwd).status).toBe(0);
+	const checks = docs(cwd)[0] ?? "";
+	expect(checks).toContain("Maximum instruction-file length: 150 lines.");
+	expect(checks).not.toContain("Maximum instruction-file length: 200 lines.");
+});
+
+test.each(["check", "applies_when"] as const)(
+	"requires a reader-facing description for a new %s identifier",
+	(field) => {
+		const cwd = directory();
+		expect(run(cwd).status).toBe(0);
+		const before = docs(cwd);
+		const changed = structuredClone(rubric);
+		first(changed.checks)[field] = "new-identifier";
+		writeFileSync(join(cwd, "rubric/v0.1.yaml"), stringify(changed));
+		for (const args of [[], ["--check"]]) {
+			const result = run(cwd, ...args);
+			expect(result.status).toBe(1);
+			expect(result.stderr).toContain(
+				"Add a reader-facing description for new-identifier",
+			);
+			expect(docs(cwd)).toEqual(before);
+		}
+	},
+);
+
 test.each(outputs)(
 	"detects an edited %s without writing either doc",
 	(file) => {
