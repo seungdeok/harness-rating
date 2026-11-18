@@ -110,7 +110,7 @@ Check selection rules:
 | C2 | computational sensors | A linter is configured | Linter config files |
 | C3 | computational sensors | Type checking is configured | Type checker config; not applicable without a type-checkable language |
 | D1 | enforcement | Agent hooks are configured | `hooks` entries in agent settings |
-| D2 | enforcement | A hook runs a check | A hook command invokes a test or lint script **that exists in the repository**, not merely a command containing a keyword |
+| D2 | enforcement | A hook runs a check | A hook command invokes a test or lint script **that exists in the repository**, not merely a command containing a keyword ([ADR 0005](../adr/0005-d2-check-scripts.md)) |
 | E1 | inferential sensors | An independent review step exists | A skill or subagent defined for review |
 | F1 | timing | A pre-commit check exists | Pre-commit configuration |
 | F2 | timing | CI runs tests and lint | Workflow files that run both |
@@ -290,5 +290,4 @@ A monthly scheduled workflow checks that every source URL is reachable and opens
 
 | Question | Decided in |
 | --- | --- |
-| D2: which scripts count as "check scripts" | #14 |
 | Validity checking: model, agent, repositories, tasks | #20 |
