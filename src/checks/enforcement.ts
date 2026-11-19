@@ -1,4 +1,5 @@
 import { posix } from "node:path";
+import { parse as parseToml } from "smol-toml";
 import { type Hook, isObject } from "../scan/agent.ts";
 import type { Repo } from "../scan/walk.ts";
 import { readText } from "../scan/walk.ts";
@@ -166,14 +167,22 @@ function scriptFileText(repo: Repo, words: string[]): string | undefined {
 	return readText(repo, path);
 }
 
-// Skill directory or agent file name, or a single-line `name:`/`description =` field
-// (YAML frontmatter and Codex TOML).
-// ponytail: multi-line descriptions (YAML `>`, TOML `"""`) are not parsed.
-const REVIEW_FIELD = /^\s*(?:name|description)\s*[:=].*\breview/im;
+// Skill directory or agent file name, a single-line `name:`/`description:` YAML
+// frontmatter field, or the `name`/`description` of a Codex agent TOML (ADR 0008).
+// ponytail: multi-line YAML descriptions (`>`) are not parsed.
+const REVIEW_FIELD = /^\s*(?:name|description)\s*:.*\breview/im;
 
 function isReviewDefinition(repo: Repo, path: string): boolean {
 	const name = path.endsWith("/SKILL.md")
 		? posix.basename(posix.dirname(path))
 		: posix.basename(path);
-	return /review/i.test(name) || REVIEW_FIELD.test(readText(repo, path) ?? "");
+	if (/review/i.test(name)) return true;
+	const text = readText(repo, path) ?? "";
+	if (!path.endsWith(".toml")) return REVIEW_FIELD.test(text);
+	try {
+		const agent = parseToml(text);
+		return /\breview/i.test(`${agent.name}\n${agent.description}`);
+	} catch {
+		return false; // malformed agent file: only its file name counts
+	}
 }

@@ -56,6 +56,19 @@ describe("D2 hook-runs-check", () => {
 			...files,
 		}).status;
 
+	test("passes for a hook defined inline in .codex/config.toml", () => {
+		expect(
+			run("hook-runs-check", {
+				".codex/config.toml":
+					'[[hooks.Stop]]\n[[hooks.Stop.hooks]]\ntype = "command"\ncommand = "npm test"\n',
+				"package.json": pkg({ test: "vitest" }),
+			}),
+		).toEqual({
+			status: "pass",
+			detail: ".codex/config.toml Stop: npm test",
+		});
+	});
+
 	test("fails for a command that only contains a keyword", () => {
 		expect(d2("echo test", { "package.json": pkg({ test: "vitest" }) })).toBe(
 			"fail",
@@ -161,6 +174,10 @@ describe("E1 review-step", () => {
 		[".claude/skills/review/SKILL.md", "---\nname: x\n---\n"],
 		[".agents/skills/pr-review/SKILL.md", ""],
 		[".codex/agents/qa.toml", 'name = "qa"\ndescription = "Review the diff"\n'],
+		[
+			".codex/agents/qa2.toml",
+			'name = "qa"\ndescription = """\nChecks the diff.\nReviews tests.\n"""\n',
+		],
 	])("passes with %s", (path, text) => {
 		expect(run("review-step", { "AGENTS.md": "", [path]: text })).toEqual({
 			status: "pass",
@@ -174,6 +191,12 @@ describe("E1 review-step", () => {
 				"CLAUDE.md": "",
 				".claude/agents/writer.md": "---\nname: writer\n---\nDo not review.\n",
 			}),
+		).toEqual({ status: "fail", detail: "no review skill or subagent" });
+	});
+
+	test("fails on a malformed agent TOML without throwing", () => {
+		expect(
+			run("review-step", { ".codex/agents/qa.toml": 'name = "review' }),
 		).toEqual({ status: "fail", detail: "no review skill or subagent" });
 	});
 

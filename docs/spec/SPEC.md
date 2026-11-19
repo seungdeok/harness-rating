@@ -265,7 +265,7 @@ Not passed (score only)
 ## Technology
 
 - **Language:** TypeScript on Node.js. Supported versions are the LTS lines: Node 24 and Node 26.
-- **Dependencies:** no runtime dependencies other than YAML and JSON parsing.
+- **Dependencies:** no runtime dependencies other than YAML, JSON, and TOML parsing ([ADR 0008](../adr/0008-toml-runtime-dependency.md)).
 - **Tests:** snapshot tests over fixture repositories. Same input, same output is locked in as a regression test.
 - **Distribution:** npm, released from GitHub Actions on tags.
 - **License:** MIT, so companies can adopt it as an internal gate.

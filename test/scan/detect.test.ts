@@ -107,3 +107,45 @@ test("settings without hooks yield no hooks and no errors", () => {
 	const [agent] = scan({ ".claude/settings.json": '{"model":"x"}' });
 	expect(agent).toMatchObject({ id: "claude-code", hooks: [], errors: [] });
 });
+
+const configToml = `model = "x"
+
+[[hooks.PreToolUse]]
+matcher = "^Bash$"
+
+[[hooks.PreToolUse.hooks]]
+type = "command"
+command = "npm test"
+timeout = 30
+`;
+
+test("reads inline [hooks] in .codex/config.toml along with hooks.json", () => {
+	const [agent] = scan({
+		".codex/hooks.json": hooksJson,
+		".codex/config.toml": configToml,
+	});
+	expect(agent).toMatchObject({ id: "agents-md", errors: [] });
+	expect(agent?.hooks).toContainEqual({
+		file: ".codex/config.toml",
+		event: "PreToolUse",
+		type: "command",
+		command: "npm test",
+	});
+	expect(agent?.hooks).toHaveLength(3);
+});
+
+test("reports malformed config.toml instead of throwing", () => {
+	const [agent] = scan({ ".codex/config.toml": "[hooks\n" });
+	expect(agent?.hooks).toEqual([]);
+	expect(agent?.errors).toEqual([
+		{
+			path: ".codex/config.toml",
+			message: expect.stringMatching(/^invalid TOML/),
+		},
+	]);
+});
+
+test("config.toml without hooks yields no hooks and no errors", () => {
+	const [agent] = scan({ ".codex/config.toml": 'model = "x"\n' });
+	expect(agent).toMatchObject({ id: "agents-md", hooks: [], errors: [] });
+});

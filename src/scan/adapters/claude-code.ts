@@ -7,7 +7,7 @@ export function claudeCode(repo: Repo) {
 	return scanAgent(repo, {
 		id: "claude-code",
 		instructionFiles: ["CLAUDE.md", ".claude/CLAUDE.md"],
-		hooksFile: ".claude/settings.json",
+		hooksFiles: [".claude/settings.json"],
 		skills: /^\.claude\/skills\/[^/]+\/SKILL\.md$/,
 		subagents: /^\.claude\/agents\/[^/]+\.md$/,
 	});
