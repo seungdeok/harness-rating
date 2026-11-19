@@ -140,7 +140,7 @@ test("reports malformed config.toml instead of throwing", () => {
 	expect(agent?.errors).toEqual([
 		{
 			path: ".codex/config.toml",
-			message: expect.stringMatching(/^invalid TOML/),
+			message: expect.stringMatching(/^invalid TOML[^\n]*$/),
 		},
 	]);
 });

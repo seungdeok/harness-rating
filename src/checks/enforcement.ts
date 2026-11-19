@@ -45,12 +45,12 @@ export const enforcementChecks: Record<string, Check> = {
 	},
 };
 
-// ADR 0006: a script counts as a check when its name is one of these words,
+// ADR 0007: a script counts as a check when its name is one of these words,
 // alone or joined to others by ":", "-", or "_" (test:unit, lint-ci).
 const CHECK_NAME =
 	/(?:^|[:_-])(?:test|tests|lint|typecheck|type-check|check|verify)(?:$|[:_-])/;
 
-/** ADR 0006. Only `command` hooks run shell commands. */
+/** ADR 0007. Only `command` hooks run shell commands. */
 function runsCheckScript(repo: Repo, hook: Hook): boolean {
 	if (hook.type !== "command" || hook.command === undefined) return false;
 	return segments(hook.command).some(

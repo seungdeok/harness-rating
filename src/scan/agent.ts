@@ -87,7 +87,8 @@ function readHooks(repo: Repo, path: string, errors: ScanError[]): Hook[] {
 	} catch (error) {
 		errors.push({
 			path,
-			message: `invalid ${toml ? "TOML" : "JSON"}: ${(error as Error).message}`,
+			// First line only: smol-toml appends lines of the file to its message.
+			message: `invalid ${toml ? "TOML" : "JSON"}: ${(error as Error).message.split("\n")[0]}`,
 		});
 		return [];
 	}
