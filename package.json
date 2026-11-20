@@ -3,6 +3,10 @@
 	"version": "0.0.0",
 	"description": "Rate a repository's AI coding agent harness from L0 to L4, with every check traced to a primary source.",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/seungdeok/harness-rating.git"
+	},
 	"type": "module",
 	"bin": {
 		"harness-rating": "dist/cli.js"
