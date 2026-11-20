@@ -7,6 +7,20 @@
 		"type": "git",
 		"url": "git+https://github.com/seungdeok/harness-rating.git"
 	},
+	"homepage": "https://github.com/seungdeok/harness-rating#readme",
+	"bugs": {
+		"url": "https://github.com/seungdeok/harness-rating/issues"
+	},
+	"keywords": [
+		"claude-code",
+		"codex",
+		"agents-md",
+		"ai-agents",
+		"ai-coding",
+		"cli",
+		"static-analysis",
+		"developer-tools"
+	],
 	"type": "module",
 	"bin": {
 		"harness-rating": "dist/cli.js"
