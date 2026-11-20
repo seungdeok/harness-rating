@@ -1,14 +1,27 @@
 # Changelog
 
-All notable changes to the CLI are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the CLI follows [Semantic Versioning](https://semver.org/).
+All notable changes to `harness-rating` are recorded here.
 
-The CLI and the rubric are versioned separately (see the spec's [versioning](docs/spec/SPEC.md#versioning)). Rubric changes are listed with their rubric version.
+This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The CLI version is independent of the rubric version.
 
-## [Unreleased]
+## [0.1.0] - Unreleased
+
+The first public release of the deterministic, static harness-rating CLI.
 
 ### Added
 
-- Rubric v0.1.0: the 14 checks that decide levels L1–L4, with a schema that rejects malformed rubric files.
-- `rubric/sources.yaml`: the list of public documents the checks cite.
-- Repository scanning that never follows symbolic links, never reads outside the repository, and skips files larger than 512 KB.
-- Detection of Claude Code and `AGENTS.md` (including Codex's `.codex/config.toml`) and reading of their settings committed to the repository.
+- Scan Claude Code and `AGENTS.md` / Codex project harness configuration without
+  executing repository code or following symbolic links.
+- Report levels L0–L4 and a separate reference score, with evidence-backed
+  checks for guides, computational sensors, enforcement, review, and timing.
+- Provide terminal and deterministic JSON output, `--min-level` CI gating,
+  `--explain`, and package-manager installation through npm.
+- Validate the public rubric and generate its check and level documentation.
+- Run CI on Node.js 24 and 26; add source-link monitoring, pre-commit checks,
+  and a tag-based npm release workflow with OIDC provenance.
+
+### Documentation
+
+- Publish the specification, accepted-source rubric, validity protocol, and
+  English and Korean project guides.
