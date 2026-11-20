@@ -25,12 +25,14 @@
 		"generate:rubric-validator": "node scripts/compile-rubric-schema.mjs",
 		"generate:rubric-docs": "npm run generate:rubric-validator && node scripts/gen-rubric-docs.ts",
 		"check:rubric-docs": "npm run generate:rubric-validator && node scripts/gen-rubric-docs.ts --check",
-		"prepack": "npm run build"
+		"prepack": "npm run build",
+		"prepare": "lefthook install"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.6.8",
 		"@types/node": "26.6.6",
 		"ajv": "^8.20.0",
+		"lefthook": "2.2.2",
 		"typescript": "7.0.2",
 		"vitest": "5.1.0"
 	},

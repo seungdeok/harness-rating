@@ -1,0 +1,8 @@
+# Fast checks for every committer; tests run in CI and the Claude Code Stop hook.
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      run: npm run typecheck --silent
+    lint:
+      run: npm run lint --silent

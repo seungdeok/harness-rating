@@ -15,6 +15,8 @@ npm run validate:rubric
 npm run build
 ```
 
+`npm ci` also installs a [lefthook](https://lefthook.dev/) pre-commit hook that runs `typecheck` and `lint`.
+
 ## Branches and pull requests
 
 - Follow the [working rules](AGENTS.md#working-rules). Open or pick an issue first, and name the branch `<type>/<issue>-<short-title>`, for example `feat/12-guide-checks`.
