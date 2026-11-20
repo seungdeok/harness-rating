@@ -1,3 +1,4 @@
+import { parse as parseToml } from "smol-toml";
 import { type Repo, readText } from "./walk.ts";
 
 export type AgentId = "claude-code" | "agents-md";
@@ -36,7 +37,8 @@ export interface Agent {
 export interface AgentPaths {
 	id: AgentId;
 	instructionFiles: string[];
-	hooksFile: string;
+	/** JSON or TOML files with a `hooks` table */
+	hooksFiles: string[];
 	skills: RegExp;
 	subagents: RegExp;
 }
@@ -47,13 +49,13 @@ export function scanAgent(repo: Repo, paths: AgentPaths): Agent | undefined {
 	const instructionFiles = paths.instructionFiles.filter((path) =>
 		repo.files.has(path),
 	);
-	const hasHooksFile = repo.files.has(paths.hooksFile);
-	const hooks = hasHooksFile ? readHooks(repo, paths.hooksFile, errors) : [];
+	const hooksFiles = paths.hooksFiles.filter((path) => repo.files.has(path));
+	const hooks = hooksFiles.flatMap((path) => readHooks(repo, path, errors));
 	const skills = filesMatching(repo, paths.skills);
 	const subagents = filesMatching(repo, paths.subagents);
 	if (
 		!instructionFiles.length &&
-		!hasHooksFile &&
+		!hooksFiles.length &&
 		!skills.length &&
 		!subagents.length
 	) {
@@ -67,7 +69,8 @@ function filesMatching(repo: Repo, pattern: RegExp): string[] {
 }
 
 /**
- * Reads hooks from a Claude Code `settings.json` or a Codex `hooks.json`. Both use
+ * Reads hooks from a Claude Code `settings.json`, a Codex `hooks.json`, or `[hooks]` in a
+ * Codex `config.toml` (ADR 0008). All use
  * `hooks: { <event>: [{ matcher?, hooks: [{ type, command? }] }] }`.
  * Problems are pushed to `errors`, never thrown: the file comes from an untrusted repo.
  */
@@ -77,13 +80,15 @@ function readHooks(repo: Repo, path: string, errors: ScanError[]): Hook[] {
 		errors.push({ path, message: "above the file size cap; not read" });
 		return [];
 	}
+	const toml = path.endsWith(".toml");
 	let data: unknown;
 	try {
-		data = JSON.parse(text);
+		data = toml ? parseToml(text) : JSON.parse(text);
 	} catch (error) {
 		errors.push({
 			path,
-			message: `invalid JSON: ${(error as Error).message}`,
+			// First line only: smol-toml appends lines of the file to its message.
+			message: `invalid ${toml ? "TOML" : "JSON"}: ${(error as Error).message.split("\n")[0]}`,
 		});
 		return [];
 	}
