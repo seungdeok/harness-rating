@@ -41,18 +41,58 @@ beforeAll(() => {
 	writeFileSync(join(root, "worktrees", "foo", "move.py"), "");
 	mkdirSync(join(root, "vendor", "lib", ".git"), { recursive: true });
 	writeFileSync(join(root, "vendor", "lib", "AGENTS.md"), "");
+	// Ignore rules: root .gitignore with negation, a nested one, and .git/info/exclude.
+	writeFileSync(join(root, ".gitignore"), ".verify/\n*.log\n!keep.log\n");
+	mkdirSync(join(root, ".verify"));
+	writeFileSync(join(root, ".verify", "move.py"), "");
+	writeFileSync(join(root, "debug.log"), "");
+	writeFileSync(join(root, "keep.log"), "");
+	writeFileSync(join(root, "pkg", ".gitignore"), "local.txt\n");
+	writeFileSync(join(root, "pkg", "local.txt"), "");
+	writeFileSync(join(root, "local.txt"), "");
+	mkdirSync(join(root, ".git", "info"));
+	writeFileSync(join(root, ".git", "info", "exclude"), "scratch.md\n");
+	writeFileSync(join(root, "scratch.md"), "");
+	writeFileSync(join(root, "UPPER.LOG"), "");
 });
 
 afterAll(() => rmSync(tmp, { recursive: true, force: true }));
 
-test("lists regular files in sorted order, skipping .git, node_modules, and nested repositories", () => {
+test("lists regular files in sorted order, skipping .git, node_modules, nested repositories, and ignored files", () => {
 	expect([...walk(root).files.keys()]).toEqual([
+		".gitignore",
 		"AGENTS.md",
+		"UPPER.LOG",
 		"big.txt",
 		"docs/guide.md",
+		"keep.log",
+		"local.txt",
 		"max.txt",
+		"pkg/.gitignore",
 		"pkg/index.js",
 	]);
+});
+
+test("applies .gitignore relative to its directory, with negation and .git/info/exclude", () => {
+	const files = walk(root).files;
+	expect(files.has(".verify/move.py")).toBe(false);
+	expect(files.has("debug.log")).toBe(false);
+	expect(files.has("keep.log")).toBe(true);
+	expect(files.has("pkg/local.txt")).toBe(false);
+	// pkg/.gitignore only covers pkg/, so the root file with the same name stays.
+	expect(files.has("local.txt")).toBe(true);
+	expect(files.has("scratch.md")).toBe(false);
+	// Case-sensitive, like git on Linux.
+	expect(files.has("UPPER.LOG")).toBe(true);
+});
+
+test("applies .gitignore without a .git directory", () => {
+	const plain = join(tmp, "plain");
+	mkdirSync(join(plain, "out"), { recursive: true });
+	writeFileSync(join(plain, ".gitignore"), "out/\n");
+	writeFileSync(join(plain, "out", "a.py"), "");
+	writeFileSync(join(plain, "a.ts"), "");
+	expect([...walk(plain).files.keys()]).toEqual([".gitignore", "a.ts"]);
 });
 
 test("reports symlinked files and directories as skipped, never read", () => {
