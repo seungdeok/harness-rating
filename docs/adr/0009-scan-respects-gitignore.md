@@ -25,6 +25,7 @@ The matching rules themselves are spelled out in the [gitignore docs](https://gi
 - It does not read global excludes (`core.excludesFile`, `~/.config/git/ignore`) or any other git config.
 - An ignored directory is not entered at all. This matches git, which can't re-include a file under an excluded directory.
 - The rules apply whether or not the root has a `.git`.
+- Matching is case-sensitive, like git on Linux, even on a case-insensitive filesystem.
 - Matching uses [`ignore`](https://www.npmjs.com/package/ignore) (MIT, no dependencies of its own), added as a runtime dependency.
 
 ## Rationale
@@ -36,6 +37,8 @@ Skipping ignored files makes a local scan look much more like what CI sees, and 
 Gitignore rules are easy to get slightly wrong (negation order, `**`, trailing slashes, escaping), so we'd rather not write our own matcher. `ignore` is a widely used implementation, and like `smol-toml` in [ADR 0008](0008-toml-runtime-dependency.md) it pulls in nothing else.
 
 Applying `.gitignore` even without a `.git` keeps a single code path, and a source archive of a repo scans the same as a checkout of it.
+
+Git folds case only when `core.ignorecase` is on, which is the default on macOS and Windows but not Linux. Matching case-sensitively everywhere means a scan on a Mac gives the same result as CI on Linux.
 
 ## Consequences
 
