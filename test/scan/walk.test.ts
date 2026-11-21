@@ -35,11 +35,17 @@ beforeAll(() => {
 	writeFileSync(join(root, "pkg", "node_modules", "dep.js"), "");
 	writeFileSync(join(root, "pkg", "index.js"), "");
 	execFileSync("mkfifo", [join(root, "fifo")]);
+	// Worktrees get a `.git` file, nested clones a `.git` dir. Both should be skipped.
+	mkdirSync(join(root, "worktrees", "foo"), { recursive: true });
+	writeFileSync(join(root, "worktrees", "foo", ".git"), "gitdir: ../../.git");
+	writeFileSync(join(root, "worktrees", "foo", "move.py"), "");
+	mkdirSync(join(root, "vendor", "lib", ".git"), { recursive: true });
+	writeFileSync(join(root, "vendor", "lib", "AGENTS.md"), "");
 });
 
 afterAll(() => rmSync(tmp, { recursive: true, force: true }));
 
-test("lists regular files in sorted order, skipping .git and node_modules", () => {
+test("lists regular files in sorted order, skipping .git, node_modules, and nested repositories", () => {
 	expect([...walk(root).files.keys()]).toEqual([
 		"AGENTS.md",
 		"big.txt",
