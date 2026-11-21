@@ -5,7 +5,20 @@ All notable changes to `harness-rating` are recorded here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The CLI version is independent of the rubric version.
 
-## [0.1.1] - Unreleased
+## [0.1.2] - Unreleased
+
+One more scanner fix. The rubric is still v0.1.0, but some repositories may get
+a different level.
+
+### Fixed
+
+- The scanner now skips files that the repository's `.gitignore` files or
+  `.git/info/exclude` ignore, so a local scan matches what CI sees on a fresh
+  checkout. Before this, something like a gitignored `.venv/` or a throwaway
+  Python script could make C1 pass or C3 fail in a TypeScript repo. It reads
+  the ignore files directly and never runs `git` (#57, #54).
+
+## [0.1.1] - 2026-11-21
 
 Two scanner fixes. The rubric is still v0.1.0, but some repositories may now
 get a different level.

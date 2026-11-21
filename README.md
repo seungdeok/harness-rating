@@ -89,7 +89,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-      - run: npx harness-rating@0.1.1 --min-level 3
+      - run: npx harness-rating@0.1.2 --min-level 3
 ```
 
 Pin the version: a new rubric version can change which checks pass.
