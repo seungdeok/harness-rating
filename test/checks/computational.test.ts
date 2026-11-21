@@ -53,6 +53,16 @@ describe("C1 test-suite", () => {
 		});
 	});
 
+	test("ignores test files under a gitignored .venv", () => {
+		expect(
+			run("test-suite", {
+				".gitignore": ".venv/\n",
+				"package.json": pkg({ scripts: { test: "vitest" } }),
+				".venv/lib/site-packages/x/test_x.py": "",
+			}),
+		).toEqual({ status: "fail", detail: "no test files found" });
+	});
+
 	test("fails with a test script but no test files", () => {
 		expect(
 			run("test-suite", {
@@ -124,6 +134,24 @@ describe("C3 type-check-config", () => {
 		[
 			"Python with pyrightconfig.json",
 			{ "a.py": "", "pyrightconfig.json": "{}" },
+		],
+		[
+			"TypeScript with gitignored Python scripts",
+			{
+				".gitignore": ".verify/\n",
+				".verify/move.py": "",
+				"api/src/a.ts": "",
+				"api/tsconfig.json": "{}",
+			},
+		],
+		[
+			"TypeScript with a gitignored .venv",
+			{
+				".gitignore": ".venv/\n",
+				".venv/lib/x.py": "",
+				"src/a.ts": "",
+				"tsconfig.json": "{}",
+			},
 		],
 		["Go (compiler-checked)", { "main.go": "" }],
 		["Rust (compiler-checked)", { "src/main.rs": "" }],
