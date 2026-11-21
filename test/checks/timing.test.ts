@@ -218,6 +218,83 @@ describe("F2 ci-tests-and-lint", () => {
 		).toMatchObject({ status: "fail" });
 	});
 
+	const workspace = {
+		"package.json": JSON.stringify({
+			workspaces: ["./api/", "packages/*", "!packages/old"],
+			scripts: { lint: "biome check" },
+		}),
+		"pnpm-workspace.yaml":
+			"packages:\n  - ./api/\n  - packages/*\n  - '!packages/old'\n",
+		"api/package.json": '{"name":"api","scripts":{"test":"vitest"}}',
+		"packages/web/package.json":
+			'{"name":"@acme/web","scripts":{"test":"vitest"}}',
+		"packages/old/package.json": '{"name":"old","scripts":{"test":"vitest"}}',
+		"examples/demo/package.json": '{"name":"demo","scripts":{"test":"vitest"}}',
+	};
+
+	test.each([
+		"pnpm lint\npnpm --filter api test",
+		"pnpm lint\npnpm --filter=api run test",
+		"pnpm lint\npnpm -F api test",
+		"pnpm lint\npnpm --filter @acme/web test",
+		"npm run lint\nnpm test -w api",
+		"npm run lint\nnpm run test --workspace=api",
+		"npm run lint\nnpm test --workspace @acme/web",
+	])("resolves a literal workspace package name: %s", (commands) => {
+		expect(
+			run("ci-tests-and-lint", {
+				...workspace,
+				".github/workflows/ci.yml": workflow(commands),
+			}),
+		).toEqual({ status: "pass" });
+	});
+
+	test.each([
+		"pnpm --filter missing test",
+		"pnpm --filter web test",
+		"pnpm --filter 'api...' test",
+		"pnpm --filter '...api' test",
+		"pnpm --filter ./api test",
+		"pnpm --filter '!web' test",
+		"pnpm --filter 'a*' test",
+		"pnpm --filter api --filter @acme/web test",
+		"pnpm --filter test",
+		// Not workspace members.
+		"pnpm --filter old test",
+		"pnpm --filter demo test",
+		"npm test -w demo",
+		// Passed to the root script, which has no test.
+		"pnpm test --filter api",
+		"pnpm run test -F api",
+		"npm test -- --workspace=api",
+		// Flags with other meanings still bail after a literal selection.
+		"pnpm --filter api -w test",
+		"pnpm --filter api --workspace-root test",
+		"pnpm --filter api --recursive test",
+		"npm test -w api --workspaces",
+		"npm test --filter api",
+	])("does not guess other package selections: %s", (command) => {
+		expect(
+			run("ci-tests-and-lint", {
+				...workspace,
+				".github/workflows/ci.yml": workflow(`pnpm lint\n${command}`),
+			}),
+		).toMatchObject({ status: "fail" });
+	});
+
+	test("does not resolve a package name shared by two manifests", () => {
+		expect(
+			run("ci-tests-and-lint", {
+				...workspace,
+				"packages/copy/package.json":
+					'{"name":"api","scripts":{"test":"vitest"}}',
+				".github/workflows/ci.yml": workflow(
+					"pnpm lint\npnpm --filter api test",
+				),
+			}),
+		).toMatchObject({ status: "fail" });
+	});
+
 	test("does not combine unrelated workflows", () => {
 		expect(
 			run("ci-tests-and-lint", {
