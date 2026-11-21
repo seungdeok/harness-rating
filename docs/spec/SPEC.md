@@ -48,7 +48,7 @@ From v0.2, `--include-user` also reads known global paths and reports a separate
 4. **Independent implementation.** Ideas from existing tools (maturity levels, CI gates) may inform the design, but code, check lists, level names, and wording are not copied.
 5. **Resist common workarounds.** Checks look at content, not just file existence, so trivial workarounds such as empty files fail. Static scanning cannot stop deliberate gaming (see [Limitations](#limitations)).
 6. **No unsupported numbers.** Levels are lists of required checks, structured like [SLSA levels](https://slsa.dev/spec/v1.0/levels). Weights come from source counts, using [OpenSSF Scorecard](https://scorecard.dev/)'s values. There are no percentage thresholds. A detection parameter uses the source's number when the source gives one; otherwise it is marked as proposed and calibrated during [validity checking](#validity).
-7. **Safe scanning.** The scanner does not follow symbolic links, does not read paths outside the repository, and does not read the contents of files above a size cap (proposed; see [ADR 0002](../adr/0002-file-size-cap.md)).
+7. **Safe scanning.** The scanner does not follow symbolic links, does not read paths outside the repository, and does not read the contents of files above a size cap (proposed; see [ADR 0002](../adr/0002-file-size-cap.md)). It skips files matched by the repository's own `.gitignore` files and `.git/info/exclude`, without running git ([ADR 0009](../adr/0009-scan-respects-gitignore.md)).
 
 ## Scope
 
@@ -176,6 +176,7 @@ The score shows progress separately from the level. It is informational and neve
 
 - **It checks configuration, not effectiveness.** How to measure a harness's coverage is an open question that Böckeler also leaves unresolved.
 - **It cannot stop deliberate gaming.** For example, a hook that calls a test script with empty tests passes D2 and C1. Organizations using the level as a bar should combine it with human review or execution-based evaluation. The README states this on its first screen.
+- **Ignore rules are close to git's, not identical.** A file force-added with `git add -f` under an ignored path is skipped. When you scan a subdirectory, `.gitignore` files above it are not read. Files ignored only by your global git excludes are still scanned. See [ADR 0009](../adr/0009-scan-respects-gitignore.md).
 - **Validity claims are limited to measured results.** Until the relationship between level and outcome is measured, the project does not claim that higher levels produce better results.
 
 ## Validity
@@ -265,7 +266,7 @@ Not passed (score only)
 ## Technology
 
 - **Language:** TypeScript on Node.js. Supported versions are the LTS lines: Node 24 and Node 26.
-- **Dependencies:** no runtime dependencies other than YAML, JSON, and TOML parsing ([ADR 0008](../adr/0008-toml-runtime-dependency.md)).
+- **Dependencies:** no runtime dependencies other than YAML, JSON, and TOML parsing ([ADR 0008](../adr/0008-toml-runtime-dependency.md)) and gitignore pattern matching ([ADR 0009](../adr/0009-scan-respects-gitignore.md)).
 - **Tests:** snapshot tests over fixture repositories. Same input, same output is locked in as a regression test.
 - **Distribution:** npm, released from GitHub Actions on tags.
 - **License:** MIT, so companies can adopt it as an internal gate.
