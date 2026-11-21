@@ -1,6 +1,6 @@
 {
 	"name": "harness-rating",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Rate a repository's AI coding agent harness from L0 to L4, with every check traced to a primary source.",
 	"license": "MIT",
 	"repository": {
