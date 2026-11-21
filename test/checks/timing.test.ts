@@ -259,15 +259,15 @@ describe("F2 ci-tests-and-lint", () => {
 		"pnpm --filter 'a*' test",
 		"pnpm --filter api --filter @acme/web test",
 		"pnpm --filter test",
-		// Not workspace members.
+		// Exist, but aren't in the workspace.
 		"pnpm --filter old test",
 		"pnpm --filter demo test",
 		"npm test -w demo",
-		// Passed to the root script, which has no test.
+		// The filter goes to the root script, and the root has no test.
 		"pnpm test --filter api",
 		"pnpm run test -F api",
 		"npm test -- --workspace=api",
-		// Flags with other meanings still bail after a literal selection.
+		// A valid filter doesn't excuse flags we already refuse.
 		"pnpm --filter api -w test",
 		"pnpm --filter api --workspace-root test",
 		"pnpm --filter api --recursive test",

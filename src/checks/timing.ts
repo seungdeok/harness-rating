@@ -289,8 +289,8 @@ function resolveDirectory(
 }
 
 /**
- * Split off one literal package selection: pnpm --filter/-F, npm --workspace/-w.
- * Returns undefined for selectors (globs, `...`, paths, exclusions) or repeats.
+ * Pull out `pnpm --filter <name>` or `npm -w <name>` when it names one package.
+ * Anything fancier (globs, `...`, paths, `!`, a second filter) and we give up.
  */
 function selectedPackage(
 	runner: string,
@@ -306,7 +306,7 @@ function selectedPackage(
 	let name: string | undefined;
 	for (let i = 0; i < args.length; i++) {
 		const arg = args[i] ?? "";
-		// Arguments after `--`, and for pnpm after the command name, go to the script.
+		// Past `--` (or past the command name, for pnpm) the flags belong to the script.
 		if (arg === "--" || (runner === "pnpm" && !arg.startsWith("-"))) {
 			rest.push(...args.slice(i));
 			break;
@@ -333,8 +333,9 @@ function selectedPackage(
 }
 
 /**
- * The directory of the only workspace member named exactly `name`. Members come
- * from pnpm-workspace.yaml `packages` (pnpm) or root package.json `workspaces` (npm).
+ * Find the workspace package called `name`. pnpm reads its members from
+ * pnpm-workspace.yaml, npm from `workspaces` in the root package.json. If the
+ * name isn't unique or the package isn't a member, CI wouldn't run it either.
  */
 function packageDirectory(
 	repo: Repo,
