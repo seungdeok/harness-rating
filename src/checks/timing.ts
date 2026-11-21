@@ -250,9 +250,19 @@ function hasTestsAndLint(
 					continue;
 				}
 				if (cwd === undefined) continue;
-				const name = scriptName(words);
-				const kind = name?.match(/^(test|lint)(?:$|[:-])/i)?.[1]?.toLowerCase();
-				if (name && kind && nonempty(packageScripts(repo, cwd)?.[name]))
+				const script = scriptName(words);
+				const kind = script?.name
+					.match(/^(test|lint)(?:$|[:-])/i)?.[1]
+					?.toLowerCase();
+				const target = script?.package
+					? packageDirectory(repo, script.runner, script.package)
+					: cwd;
+				if (
+					script &&
+					kind &&
+					target !== undefined &&
+					nonempty(packageScripts(repo, target)?.[script.name])
+				)
 					found.add(kind);
 			}
 		}
@@ -278,9 +288,96 @@ function resolveDirectory(
 	return current;
 }
 
-function scriptName([runner, ...args]: string[]): string | undefined {
+/**
+ * Pull out `pnpm --filter <name>` or `npm -w <name>` when it names one package.
+ * Anything fancier (globs, `...`, paths, `!`, a second filter) and we give up.
+ */
+function selectedPackage(
+	runner: string,
+	args: string[],
+): { args: string[]; name?: string } | undefined {
+	const flags =
+		runner === "pnpm"
+			? ["--filter", "-F"]
+			: runner === "npm"
+				? ["--workspace", "-w"]
+				: [];
+	const rest: string[] = [];
+	let name: string | undefined;
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i] ?? "";
+		// Past `--` (or past the command name, for pnpm) the flags belong to the script.
+		if (arg === "--" || (runner === "pnpm" && !arg.startsWith("-"))) {
+			rest.push(...args.slice(i));
+			break;
+		}
+		const flag = flags.find(
+			(flag) =>
+				arg === flag || (flag.startsWith("--") && arg.startsWith(`${flag}=`)),
+		);
+		if (!flag) {
+			rest.push(arg);
+			continue;
+		}
+		if (name !== undefined) return undefined;
+		name = arg === flag ? args[++i] : arg.slice(flag.length + 1);
+		if (
+			!name ||
+			!/^(?:@[a-z0-9][\w~-]*(?:\.[\w~-]+)*\/)?[a-z0-9][\w~-]*(?:\.[\w~-]+)*$/i.test(
+				name,
+			)
+		)
+			return undefined;
+	}
+	return { args: rest, name };
+}
+
+/**
+ * Find the workspace package called `name`. pnpm reads its members from
+ * pnpm-workspace.yaml, npm from `workspaces` in the root package.json. If the
+ * name isn't unique or the package isn't a member, CI wouldn't run it either.
+ */
+function packageDirectory(
+	repo: Repo,
+	runner: string,
+	name: string,
+): string | undefined {
+	const workspaces =
+		runner === "pnpm"
+			? config(repo, "pnpm-workspace.yaml")?.packages
+			: config(repo, "package.json")?.workspaces;
+	const patterns = (
+		Array.isArray(workspaces) ? workspaces : object(workspaces)?.packages
+	) as unknown[] | undefined;
+	if (!Array.isArray(patterns)) return undefined;
+	const globs = patterns
+		.filter(nonempty)
+		.map((pattern) => pattern.replace(/^(!?)(?:\.\/)?(.*?)\/?$/, "$1$2"));
+	const member = (directory: string) =>
+		globs.some(
+			(glob) => !glob.startsWith("!") && posix.matchesGlob(directory, glob),
+		) &&
+		!globs.some(
+			(glob) =>
+				glob.startsWith("!") && posix.matchesGlob(directory, glob.slice(1)),
+		);
+	const matches = [...repo.files.keys()].filter(
+		(path) =>
+			/(?:^|\/)package\.json$/.test(path) && config(repo, path)?.name === name,
+	);
+	const directory = posix.dirname(matches[0] ?? "");
+	return matches.length === 1 && member(directory) ? directory : undefined;
+}
+
+function scriptName(
+	words: string[],
+): { name: string; runner: string; package?: string } | undefined {
+	const [runner, ...all] = words;
 	if (!runner || !["npm", "pnpm", "yarn", "bun"].includes(runner))
 		return undefined;
+	const selection = selectedPackage(runner, all);
+	if (!selection) return undefined;
+	const { args, name: selected } = selection;
 	// These flags change package selection or bypass scripts; do not guess.
 	if (
 		args.some((arg) =>
@@ -290,13 +387,19 @@ function scriptName([runner, ...args]: string[]): string | undefined {
 		)
 	)
 		return undefined;
-	if (args[0] === "run") return args[1];
-	if ((runner === "npm" || runner === "pnpm") && args[0] === "run-script")
-		return args[1];
-	if (runner === "npm") return args[0] === "test" ? "test" : undefined;
-	// Bun's bare test/lint commands are built-ins, not package-script evidence.
-	if (runner === "bun") return undefined;
-	return args[0];
+	const name =
+		args[0] === "run" ||
+		((runner === "npm" || runner === "pnpm") && args[0] === "run-script")
+			? args[1]
+			: runner === "npm"
+				? args[0] === "test"
+					? "test"
+					: undefined
+				: // Bun's bare test/lint commands are built-ins, not package-script evidence.
+					runner === "bun"
+					? undefined
+					: args[0];
+	return name ? { name, runner, package: selected } : undefined;
 }
 
 function disabled(condition: unknown): boolean {
