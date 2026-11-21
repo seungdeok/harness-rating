@@ -5,7 +5,21 @@ All notable changes to `harness-rating` are recorded here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The CLI version is independent of the rubric version.
 
-## [0.1.0] - Unreleased
+## [0.1.1] - Unreleased
+
+Two scanner fixes. The rubric is still v0.1.0, but some repositories may now
+get a different level.
+
+### Fixed
+
+- F2 now counts a per-package test or lint step such as
+  `pnpm --filter api test` or `npm test -w api`, as long as it names exactly
+  one workspace package (#55).
+- The scanner no longer reads nested repositories or linked git worktrees
+  inside the target. Their files were being counted as part of the scanned
+  repository (#54).
+
+## [0.1.0] - 2026-11-20
 
 The first public release of the deterministic, static harness-rating CLI.
 
