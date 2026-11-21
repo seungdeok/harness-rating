@@ -35,7 +35,7 @@ beforeAll(() => {
 	writeFileSync(join(root, "pkg", "node_modules", "dep.js"), "");
 	writeFileSync(join(root, "pkg", "index.js"), "");
 	execFileSync("mkfifo", [join(root, "fifo")]);
-	// A linked worktree has a `.git` file; a nested clone or submodule, a `.git` dir.
+	// Worktrees get a `.git` file, nested clones a `.git` dir. Both should be skipped.
 	mkdirSync(join(root, "worktrees", "foo"), { recursive: true });
 	writeFileSync(join(root, "worktrees", "foo", ".git"), "gitdir: ../../.git");
 	writeFileSync(join(root, "worktrees", "foo", "move.py"), "");

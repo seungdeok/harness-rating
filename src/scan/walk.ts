@@ -48,8 +48,8 @@ function visit(repo: Repo, dir: string): void {
 		repo.skipped.push({ path: dir, reason: "unreadable" });
 		return;
 	}
-	// A nested repository, submodule, or linked worktree (`.git` dir or file) is
-	// not part of this repository; scanning it would count its harness as ours.
+	// A `.git` here means some other checkout (worktree, submodule, nested clone).
+	// Not ours, so don't scan it.
 	if (dir && names.includes(".git")) return;
 	// Code-unit order, not localeCompare, so the order never depends on the machine's locale.
 	names.sort();
