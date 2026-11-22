@@ -5,7 +5,19 @@ All notable changes to `harness-rating` are recorded here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The CLI version is independent of the rubric version.
 
-## [0.1.2] - Unreleased
+## [0.1.3] - Unreleased
+
+One check fix. The rubric is still v0.1.0, but some monorepos may now get a
+different level.
+
+### Fixed
+
+- F3 now finds Knip and NYC configuration inside workspace packages, not only at
+  the repository root. Workspace packages come from `pnpm-workspace.yaml`
+  `packages` or, without it, the root `package.json` `workspaces`. Before this,
+  a pnpm monorepo with `web/app/knip.json` failed F3 (#64).
+
+## [0.1.2] - 2026-11-21
 
 One more scanner fix. The rubric is still v0.1.0, but some repositories may get
 a different level.

@@ -89,7 +89,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-      - run: npx harness-rating@0.1.2 --min-level 3
+      - run: npx harness-rating@0.1.3 --min-level 3
 ```
 
 버전은 고정하세요. 루브릭 버전이 바뀌면 통과하는 검사가 달라질 수 있어요.
