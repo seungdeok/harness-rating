@@ -43,7 +43,11 @@ executed or fetched. Configuration is evidence of setup, not effectiveness.
   Knip JSON with `entry`, `project`, `workspaces`, or `include`; NYC JSON/YAML
   with a recognized nonempty coverage setting; or `.coveragerc` with an option
   in a coverage section. Root `package.json` fields `renovate`, `knip`, and `nyc`
-  are also read. Recognized file paths are listed directly in the implementation.
+  are also read. Knip and NYC configuration (files and `package.json` fields) is
+  also read in each workspace package: a directory with a `package.json` that
+  matches `pnpm-workspace.yaml` `packages` or, without it, the root
+  `package.json` `workspaces`. Dependabot, Renovate, and Coverage.py are read at
+  the root only. Recognized file paths are listed directly in the implementation.
   An empty object, empty list, or dependency declaration alone does not count.
 - **F4 `scheduled-workflow`:** a GitHub Actions workflow with a jobs mapping and
   `on.schedule[]` containing a five-field cron expression (including month/day

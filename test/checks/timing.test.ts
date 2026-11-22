@@ -470,6 +470,66 @@ describe("F3 drift-sensor", () => {
 	])("fails without supported drift configuration: %j", (files) => {
 		expect(run("drift-sensor", files)).toMatchObject({ status: "fail" });
 	});
+
+	test.each<Record<string, string>>([
+		{
+			"pnpm-workspace.yaml": "packages:\n  - api\n  - web/*",
+			"web/app/package.json": '{"name":"web"}',
+			"web/app/knip.json": '{"entry":["src/index.ts"]}',
+		},
+		{
+			"package.json": '{"workspaces":["packages/*"]}',
+			"packages/a/package.json": '{"knip":{"entry":["src/index.ts"]}}',
+		},
+		{
+			"package.json": '{"workspaces":{"packages":["packages/*"]}}',
+			"packages/a/package.json": "{}",
+			"packages/a/.nycrc": '{"all":true}',
+		},
+		{
+			"package.json": '{"workspaces":["packages/*"]}',
+			"packages/a/package.json": '{"nyc":{"all":true}}',
+		},
+	])("passes with config in a workspace package: %j", (files) => {
+		expect(run("drift-sensor", files)).toEqual({ status: "pass" });
+	});
+
+	test.each<Record<string, string>>([
+		// Not a workspace member.
+		{
+			"web/app/package.json": "{}",
+			"web/app/knip.json": '{"entry":["src/index.ts"]}',
+		},
+		{
+			"pnpm-workspace.yaml": "packages:\n  - web/*\n  - '!web/old'",
+			"web/old/package.json": "{}",
+			"web/old/knip.json": '{"entry":["src/index.ts"]}',
+		},
+		{
+			"package.json": '{"workspaces":["packages/*","!packages/old"]}',
+			"packages/old/package.json": "{}",
+			"packages/old/knip.json": '{"entry":["src/index.ts"]}',
+		},
+		// pnpm ignores package.json workspaces when pnpm-workspace.yaml exists.
+		{
+			"pnpm-workspace.yaml": "packages:\n  - web/app",
+			"package.json": '{"workspaces":["web/*"]}',
+			"web/old/package.json": "{}",
+			"web/old/knip.json": '{"entry":["src/index.ts"]}',
+		},
+		// A member directory without package.json is not a package.
+		{
+			"pnpm-workspace.yaml": "packages:\n  - web/*",
+			"web/app/knip.json": '{"entry":["src/index.ts"]}',
+		},
+		{
+			"pnpm-workspace.yaml": "packages:\n  - web/*",
+			"web/app/package.json": "{}",
+			"web/app/knip.json": "{}",
+		},
+	])("fails without usable workspace config: %j", (files) => {
+		expect(run("drift-sensor", files)).toMatchObject({ status: "fail" });
+	});
 });
 
 describe("F4 scheduled-workflow", () => {
