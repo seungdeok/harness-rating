@@ -29,3 +29,4 @@ A Claude Code `Stop` hook runs `typecheck` and `lint` before a turn ends. For an
 - Everything committed or posted to GitHub (code, docs, issues, PRs, commits) is in English.
 - One issue, one branch, one PR. Parallel work on separate issues uses separate git worktrees.
 - Rubric changes follow the spec's [source rules](docs/spec/SPEC.md#source-rules).
+- When a mistake needs correcting more than once, prefer a lint rule (`biome.json`) or a test over a new line in this file.

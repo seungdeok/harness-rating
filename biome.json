@@ -8,9 +8,137 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
+	"linter": {
+		"rules": {
+			"style": {
+				"useNodejsImportProtocol": "error"
+			}
+		}
+	},
 	"markdown": {
 		"formatter": {
 			"enabled": false
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["src/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"node:*",
+											"node:*/**",
+											"!node:fs",
+											"!node:fs/**",
+											"!node:path",
+											"!node:path/**",
+											"!node:url",
+											"!node:util",
+											"!node:module"
+										],
+										"message": "src/ may only use node:fs, node:path, node:url, node:util and node:module: the scanner never executes code and makes no network requests (docs/spec/SPEC.md#principles)."
+									}
+								]
+							}
+						},
+						"noRestrictedGlobals": {
+							"level": "error",
+							"options": {
+								"deniedGlobals": {
+									"fetch": "The scanner makes no network requests (docs/spec/SPEC.md#principles).",
+									"WebSocket": "The scanner makes no network requests (docs/spec/SPEC.md#principles).",
+									"Function": "The scanner never executes code (docs/spec/SPEC.md#principles)."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/scan/**", "src/rubric/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"node:*",
+											"node:*/**",
+											"!node:fs",
+											"!node:fs/**",
+											"!node:path",
+											"!node:path/**",
+											"!node:url",
+											"!node:util",
+											"!node:module"
+										],
+										"message": "src/ may only use node:fs, node:path, node:url, node:util and node:module: the scanner never executes code and makes no network requests (docs/spec/SPEC.md#principles)."
+									},
+									{
+										"group": [
+											"**/checks/**",
+											"**/report/**",
+											"**/level.ts",
+											"**/score.ts",
+											"**/cli.ts"
+										],
+										"message": "scan/ and rubric/ are the bottom layer; they must not import checks, scoring, or reporting."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/checks/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"node:*",
+											"node:*/**",
+											"!node:fs",
+											"!node:fs/**",
+											"!node:path",
+											"!node:path/**",
+											"!node:url",
+											"!node:util",
+											"!node:module"
+										],
+										"message": "src/ may only use node:fs, node:path, node:url, node:util and node:module: the scanner never executes code and makes no network requests (docs/spec/SPEC.md#principles)."
+									},
+									{
+										"group": [
+											"**/report/**",
+											"**/level.ts",
+											"**/score.ts",
+											"**/cli.ts"
+										],
+										"message": "checks/ sits below scoring and reporting; it must not import them."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	]
 }
