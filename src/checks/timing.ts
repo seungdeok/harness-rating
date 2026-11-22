@@ -333,15 +333,13 @@ function selectedPackage(
 }
 
 /**
- * Find the workspace package called `name`. pnpm reads its members from
- * pnpm-workspace.yaml, npm from `workspaces` in the root package.json. If the
- * name isn't unique or the package isn't a member, CI wouldn't run it either.
+ * Membership test for one workspace source: pnpm reads its members from
+ * pnpm-workspace.yaml, npm from `workspaces` in the root package.json.
  */
-function packageDirectory(
+function workspaceMember(
 	repo: Repo,
 	runner: string,
-	name: string,
-): string | undefined {
+): ((directory: string) => boolean) | undefined {
 	const workspaces =
 		runner === "pnpm"
 			? config(repo, "pnpm-workspace.yaml")?.packages
@@ -353,7 +351,7 @@ function packageDirectory(
 	const globs = patterns
 		.filter(nonempty)
 		.map((pattern) => pattern.replace(/^(!?)(?:\.\/)?(.*?)\/?$/, "$1$2"));
-	const member = (directory: string) =>
+	return (directory) =>
 		globs.some(
 			(glob) => !glob.startsWith("!") && posix.matchesGlob(directory, glob),
 		) &&
@@ -361,12 +359,41 @@ function packageDirectory(
 			(glob) =>
 				glob.startsWith("!") && posix.matchesGlob(directory, glob.slice(1)),
 		);
+}
+
+/**
+ * Find the workspace package called `name`. If the name isn't unique or the
+ * package isn't a member, CI wouldn't run it either.
+ */
+function packageDirectory(
+	repo: Repo,
+	runner: string,
+	name: string,
+): string | undefined {
+	const member = workspaceMember(repo, runner);
+	if (!member) return undefined;
 	const matches = [...repo.files.keys()].filter(
 		(path) =>
 			/(?:^|\/)package\.json$/.test(path) && config(repo, path)?.name === name,
 	);
 	const directory = posix.dirname(matches[0] ?? "");
 	return matches.length === 1 && member(directory) ? directory : undefined;
+}
+
+/**
+ * The root plus every workspace member that has a package.json. pnpm ignores
+ * `workspaces` in package.json when pnpm-workspace.yaml exists.
+ */
+function packageDirectories(repo: Repo): string[] {
+	const member = workspaceMember(repo, "pnpm") ?? workspaceMember(repo, "npm");
+	if (!member) return ["."];
+	return [
+		".",
+		...[...repo.files.keys()]
+			.filter((path) => /\/package\.json$/.test(path))
+			.map((path) => posix.dirname(path))
+			.filter(member),
+	];
 }
 
 function scriptName(
@@ -516,42 +543,41 @@ function hasDriftSensor(repo: Repo): boolean {
 		)
 	)
 		return true;
-	if (
-		[
-			object(manifest?.knip),
-			...["knip.json", ".knip.json"].map((path) => config(repo, path)),
-		].some(
-			(value) =>
-				value &&
-				populated(value, ["entry", "project", "workspaces", "include"]).length >
-					0,
+	for (const directory of packageDirectories(repo)) {
+		const at = (file: string) => config(repo, posix.join(directory, file));
+		const local = directory === "." ? manifest : at("package.json");
+		if (
+			[object(local?.knip), at("knip.json"), at(".knip.json")].some(
+				(value) =>
+					value &&
+					populated(value, ["entry", "project", "workspaces", "include"])
+						.length > 0,
+			)
 		)
-	)
-		return true;
-	if (
-		[
-			object(manifest?.nyc),
-			...[".nycrc", ".nycrc.json", ".nycrc.yml", ".nycrc.yaml"].map((path) =>
-				config(repo, path),
-			),
-		].some(
-			(value) =>
-				value &&
-				populated(value, [
-					"all",
-					"include",
-					"exclude",
-					"reporter",
-					"check-coverage",
-					"branches",
-					"lines",
-					"functions",
-					"statements",
-					"extends",
-				]).length > 0,
+			return true;
+		if (
+			[
+				object(local?.nyc),
+				...[".nycrc", ".nycrc.json", ".nycrc.yml", ".nycrc.yaml"].map(at),
+			].some(
+				(value) =>
+					value &&
+					populated(value, [
+						"all",
+						"include",
+						"exclude",
+						"reporter",
+						"check-coverage",
+						"branches",
+						"lines",
+						"functions",
+						"statements",
+						"extends",
+					]).length > 0,
+			)
 		)
-	)
-		return true;
+			return true;
+	}
 	const coverage = readText(repo, ".coveragerc") ?? "";
 	let section = false;
 	for (const line of coverage.split(/\r?\n/)) {
