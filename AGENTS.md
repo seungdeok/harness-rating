@@ -22,7 +22,7 @@ npm run generate:rubric-docs  # regenerate docs/rubric.md and docs/levels.md aft
 node dist/cli.js --min-level 4 .  # self-scan; CI requires L4
 ```
 
-A Claude Code `Stop` hook runs `typecheck` and `lint` before a turn ends. For an independent review of a change, use the `reviewer` subagent (`.claude/agents/reviewer.md`).
+A Claude Code `Stop` hook runs `typecheck`, `lint`, and `test` before a turn ends. For an independent review of a change, use the `reviewer` subagent (`.claude/agents/reviewer.md`).
 
 ## Working rules
 
