@@ -38,7 +38,7 @@
 		"build": "npm run generate:rubric-validator && tsc -p tsconfig.build.json",
 		"typecheck": "tsc",
 		"lint": "biome check",
-		"test": "npm run generate:rubric-validator && vitest run",
+		"test": "npm run generate:rubric-validator && vitest run --dir test",
 		"validate:rubric": "npm run generate:rubric-validator && node src/rubric/validate-cli.ts",
 		"generate:rubric-validator": "node scripts/compile-rubric-schema.mjs",
 		"generate:rubric-docs": "npm run generate:rubric-validator && node scripts/gen-rubric-docs.ts",
