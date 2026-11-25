@@ -113,7 +113,7 @@ const LINTER_FILES = [
 	".flake8",
 	".pylintrc",
 	"pylintrc",
-	// Go, Rust, Ruby, Swift, Kotlin, shell, CSS, PHP
+	// Go, Rust, Ruby, Swift, Kotlin, Dart, shell, CSS, PHP (formatters such as Pint are not linters)
 	".golangci.yml",
 	".golangci.yaml",
 	".golangci.toml",
@@ -123,6 +123,7 @@ const LINTER_FILES = [
 	".rubocop.yml",
 	".swiftlint.yml",
 	"detekt.yml",
+	"analysis_options.yaml",
 	".shellcheckrc",
 	".stylelintrc",
 	".stylelintrc.json",
@@ -130,6 +131,10 @@ const LINTER_FILES = [
 	"phpcs.xml",
 	"phpcs.xml.dist",
 	"phpstan.neon",
+	"phpstan.neon.dist",
+	"phpstan.dist.neon",
+	"psalm.xml",
+	"psalm.xml.dist",
 ];
 
 const LINTER_SECTIONS: [string, string][] = [

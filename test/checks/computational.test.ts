@@ -133,6 +133,16 @@ describe("C2 linter-config", () => {
 			{ "pyproject.toml": "[tool.ruff]\nline-length = 100" },
 		],
 		["golangci", { ".golangci.yml": "" }],
+		...[
+			"analysis_options.yaml",
+			"phpstan.neon.dist",
+			"phpstan.dist.neon",
+			"psalm.xml",
+			"psalm.xml.dist",
+		].map((config): [string, Record<string, string>] => [
+			config,
+			{ [config]: "" },
+		]),
 		["Cargo [lints]", { "Cargo.toml": "[lints.clippy]\nall = 'warn'" }],
 		[
 			"eslintConfig in package.json",
@@ -144,6 +154,13 @@ describe("C2 linter-config", () => {
 		],
 	])("passes with %s", (_, files) => {
 		expect(run("linter-config", files)).toEqual({ status: "pass" });
+	});
+
+	test("does not count a formatter-only config such as Laravel Pint", () => {
+		expect(run("linter-config", { "pint.json": "{}" })).toEqual({
+			status: "fail",
+			detail: "no linter configuration found",
+		});
 	});
 
 	test("fails without a linter", () => {
