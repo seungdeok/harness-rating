@@ -33,10 +33,11 @@ export const computationalChecks: Record<string, Check> = {
 	"type-check-config": ({ repo }) => typeCheck(repo),
 };
 
-// Test files by common convention: test directories, *.test.* / *.spec.*, test_*.py,
-// *_test.{py,go,rb}, *_spec.rb, and Java/Kotlin src/test/.
+// Test files by common convention: test directories (SwiftPM's Tests/ included), .NET
+// *.Tests projects, *.test.* / *.spec.*, test_*.py, *_test.{py,go,rb}, *_spec.rb, and
+// Java/Kotlin src/test/.
 const TEST_FILE =
-	/(?:^|\/)(?:tests?|__tests__|spec)\/|\.(?:test|spec)\.[cm]?[jt]sx?$|(?:^|\/)test_[^/]+\.py$|_test\.(?:py|go|rb)$|_spec\.rb$/;
+	/(?:^|\/)(?:[Tt]ests?|__tests__|spec)\/|(?:^|\/)[^/]+\.(?:Unit|Integration)?Tests?\/|\.(?:test|spec)\.[cm]?[jt]sx?$|(?:^|\/)test_[^/]+\.py$|_test\.(?:py|go|rb)$|_spec\.rb$/;
 
 // Ecosystems whose standard tooling runs tests without a project-defined script.
 const BUILT_IN_TEST_RUNNERS = [
@@ -54,7 +55,15 @@ const BUILT_IN_TEST_RUNNERS = [
 	"mix.exs",
 	".rspec",
 	"Rakefile",
+	"pubspec.yaml",
+	"Package.swift",
+	"phpunit.xml",
+	"phpunit.xml.dist",
+	"phpunit.dist.xml",
 ];
+
+// `dotnet test` finds a solution or project file in the current directory.
+const DOTNET_PROJECT = /^[^/]+\.(?:sln|slnx|csproj|fsproj|vbproj)$/;
 
 // npm init's placeholder: "echo \"Error: no test specified\" && exit 1"
 const NPM_PLACEHOLDER = /no test specified/;
@@ -72,6 +81,9 @@ function hasTestCommand(repo: Repo): boolean {
 	const npmTest = scriptOf(repo, "test");
 	if (npmTest !== undefined && !NPM_PLACEHOLDER.test(npmTest)) return true;
 	if (BUILT_IN_TEST_RUNNERS.some((path) => repo.files.has(path))) return true;
+	if ([...repo.files.keys()].some((path) => DOTNET_PROJECT.test(path))) {
+		return true;
+	}
 	const make = ["Makefile", "makefile", "GNUmakefile", "justfile", "Justfile"]
 		.map((path) => readText(repo, path) ?? "")
 		.join("\n");
