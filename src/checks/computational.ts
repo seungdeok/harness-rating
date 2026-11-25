@@ -136,6 +136,14 @@ const STATICALLY_TYPED =
 
 // Any depth: monorepos often keep tsconfig.json only in packages.
 const TSCONFIG = /(?:^|\/)tsconfig(?:\.[\w-]+)?\.json$/;
+// A Python project declares itself at the root; Python files without one are helper scripts.
+const PYTHON_MANIFESTS = [
+	"pyproject.toml",
+	"setup.py",
+	"setup.cfg",
+	"requirements.txt",
+	"Pipfile",
+];
 const PYTHON_TYPE_FILES = [
 	"mypy.ini",
 	".mypy.ini",
@@ -153,6 +161,7 @@ const PYTHON_TYPE_SECTIONS: [string, string][] = [
 /**
  * Not applicable unless the repo has a type-checkable language: TypeScript or Python
  * (need a type checker configured) or a statically typed language (passes).
+ * Python counts only with a root manifest or a type checker configured (ADR 0010).
  * Plain JavaScript, shell, Ruby, PHP, and docs-only repos are not applicable.
  */
 function typeCheck(repo: Repo): CheckOutcome {
@@ -160,7 +169,13 @@ function typeCheck(repo: Repo): CheckOutcome {
 	const hasTypeScript = paths.some(
 		(path) => TYPESCRIPT.test(path) && !path.endsWith(".d.ts"),
 	);
-	const hasPython = paths.some((path) => PYTHON.test(path));
+	const hasPythonTypeChecker =
+		PYTHON_TYPE_FILES.some((path) => repo.files.has(path)) ||
+		hasSection(repo, PYTHON_TYPE_SECTIONS);
+	const hasPython =
+		paths.some((path) => PYTHON.test(path)) &&
+		(hasPythonTypeChecker ||
+			PYTHON_MANIFESTS.some((path) => repo.files.has(path)));
 	if (!hasTypeScript && !hasPython) {
 		return paths.some((path) => STATICALLY_TYPED.test(path))
 			? { status: "pass" }
@@ -170,11 +185,7 @@ function typeCheck(repo: Repo): CheckOutcome {
 	if (hasTypeScript && !paths.some((path) => TSCONFIG.test(path))) {
 		missing.push("TypeScript without tsconfig.json");
 	}
-	if (
-		hasPython &&
-		!PYTHON_TYPE_FILES.some((path) => repo.files.has(path)) &&
-		!hasSection(repo, PYTHON_TYPE_SECTIONS)
-	) {
+	if (hasPython && !hasPythonTypeChecker) {
 		missing.push("Python without a mypy, pyright, or ty configuration");
 	}
 	return missing.length > 0

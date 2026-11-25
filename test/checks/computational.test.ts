@@ -155,6 +155,14 @@ describe("C3 type-check-config", () => {
 		],
 		["Go (compiler-checked)", { "main.go": "" }],
 		["Rust (compiler-checked)", { "src/main.rs": "" }],
+		[
+			"Go plus Python scripts and no root Python manifest",
+			{ "main.go": "", "scripts/gen.py": "" },
+		],
+		[
+			"Python scripts with a manifest below the root",
+			{ "main.go": "", "tools/pkg/pyproject.toml": "", "tools/pkg/a.py": "" },
+		],
 	])("passes with %s", (_, files) => {
 		expect(run("type-check-config", files)).toEqual({ status: "pass" });
 	});
@@ -171,10 +179,17 @@ describe("C3 type-check-config", () => {
 			"Python without a mypy, pyright, or ty configuration",
 		],
 		[
-			"Go plus untyped Python",
-			{ "main.go": "", "scripts/gen.py": "" },
+			"Go plus a Python package at the root",
+			{ "main.go": "", "requirements.txt": "", "scripts/gen.py": "" },
 			"Python without a mypy, pyright, or ty configuration",
 		],
+		...["setup.py", "setup.cfg", "requirements.txt", "Pipfile"].map(
+			(manifest): [string, Record<string, string>, string] => [
+				`Python with ${manifest} and no type checker`,
+				{ "a.py": "", [manifest]: "" },
+				"Python without a mypy, pyright, or ty configuration",
+			],
+		),
 	])("fails with %s", (_, files, detail) => {
 		expect(run("type-check-config", files)).toEqual({ status: "fail", detail });
 	});
@@ -184,6 +199,11 @@ describe("C3 type-check-config", () => {
 		["pure Markdown", { "README.md": "# x", "docs/guide.md": "" }],
 		["plain JavaScript", { "index.js": "", "package.json": "{}" }],
 		["TypeScript declarations only", { "types/index.d.ts": "" }],
+		["Python scripts without a root manifest", { "scripts/a.py": "" }],
+		[
+			"C plus Python scripts",
+			{ "kernel/a.c": "", "scripts/checkpatch.py": "" },
+		],
 	])("is not applicable for %s", (_, files) => {
 		expect(run("type-check-config", files)).toEqual({ status: "na" });
 	});
