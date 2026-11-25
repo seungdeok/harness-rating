@@ -1,6 +1,6 @@
 # ADR 0005: Which languages make C3 applicable, and how each passes
 
-- Status: Accepted
+- Status: Superseded by 0010
 - Date: 2026-11-18
 - Issue: #13
 
