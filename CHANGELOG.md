@@ -5,7 +5,26 @@ All notable changes to `harness-rating` are recorded here.
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The CLI version is independent of the rubric version.
 
-## [0.1.3] - Unreleased
+## [0.1.4] - Unreleased
+
+Three check fixes found by rating the most-starred repository in each major
+language (#21). The rubric is still v0.1.0, but repositories outside the
+JavaScript and Python ecosystems may now get a different score or level.
+
+### Fixed
+
+- C3 no longer asks for a Python type checker just because a repository has a
+  few Python scripts. Python counts only when the root has a Python manifest
+  (`pyproject.toml`, `setup.py`, `setup.cfg`, `requirements.txt`, `Pipfile`) or
+  a Python type checker configuration. Before this, Go, Rust, Java, C#, Dart,
+  Swift, and C repositories with helper scripts failed C3 (#74, ADR 0010).
+- C1 recognizes `pubspec.yaml`, `Package.swift`, PHPUnit config files, and a
+  root .NET solution or project file as test commands, and finds tests in
+  SwiftPM `Tests/` directories and .NET `*.Tests` projects (#75).
+- C2 recognizes the Dart analyzer's `analysis_options.yaml` and the other
+  default config names of PHPStan and Psalm (#76).
+
+## [0.1.3] - 2026-11-22
 
 One check fix. The rubric is still v0.1.0, but some monorepos may now get a
 different level.
