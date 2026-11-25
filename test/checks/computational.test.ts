@@ -35,8 +35,51 @@ describe("C1 test-suite", () => {
 			},
 		],
 		["Maven src/test", { "pom.xml": "", "src/test/java/ATest.java": "" }],
+		[
+			"Dart pubspec.yaml and test/",
+			{ "pubspec.yaml": "name: x", "test/a_test.dart": "" },
+		],
+		...["phpunit.xml", "phpunit.xml.dist", "phpunit.dist.xml"].map(
+			(config): [string, Record<string, string>] => [
+				`PHPUnit ${config} and tests/`,
+				{ [config]: "<phpunit/>", "tests/Unit/ATest.php": "" },
+			],
+		),
+		[
+			"SwiftPM Package.swift and Tests/",
+			{ "Package.swift": "", "Tests/XTests/ATests.swift": "" },
+		],
+		[
+			".NET x.sln and a *.UnitTests project",
+			{ "x.sln": "", "X.UnitTests/ParserTests.cs": "" },
+		],
+		...["x.sln", "x.slnx", "x.csproj", "x.fsproj", "x.vbproj"].map(
+			(project): [string, Record<string, string>] => [
+				`.NET ${project} and a *.Tests project`,
+				{ [project]: "", "X.Tests/ParserTests.cs": "" },
+			],
+		),
 	])("passes with %s", (_, files) => {
 		expect(run("test-suite", files)).toEqual({ status: "pass" });
+	});
+
+	test("does not treat a *.Testing project as tests", () => {
+		expect(run("test-suite", { "x.sln": "", "Foo.Testing/A.cs": "" })).toEqual({
+			status: "fail",
+			detail: "no test files found",
+		});
+	});
+
+	test("fails with a .NET project below the root", () => {
+		expect(
+			run("test-suite", {
+				"src/x.sln": "",
+				"src/X.Tests/ParserTests.cs": "",
+			}),
+		).toMatchObject({
+			status: "fail",
+			detail: expect.stringMatching(/no test command/),
+		});
 	});
 
 	test("fails with test files but npm's placeholder test script", () => {
