@@ -59,8 +59,43 @@ describe("C1 test-suite", () => {
 				{ [project]: "", "X.Tests/ParserTests.cs": "" },
 			],
 		),
+		[
+			"Zig build.zig test step and inline test blocks",
+			{
+				"build.zig": 'const test_step = b.step("test", "Run unit tests");',
+				"src/main.zig": 'test "parses" {\n    try expect(true);\n}\n',
+			},
+		],
+		[
+			"R DESCRIPTION and tests/testthat/",
+			{
+				DESCRIPTION: "Package: x",
+				"tests/testthat/test-a.R": "",
+			},
+		],
 	])("passes with %s", (_, files) => {
 		expect(run("test-suite", files)).toEqual({ status: "pass" });
+	});
+
+	test("fails with build.zig that declares no test step", () => {
+		expect(
+			run("test-suite", {
+				"build.zig": 'const run_step = b.step("run", "Run the app");',
+				"src/main.zig": "test {\n}\n",
+			}),
+		).toMatchObject({
+			status: "fail",
+			detail: expect.stringMatching(/no test command/),
+		});
+	});
+
+	test("does not treat a Zig identifier starting with test as a test block", () => {
+		expect(
+			run("test-suite", {
+				"build.zig": 'b.step("test", "")',
+				"src/main.zig": 'const testing = @import("std").testing;\n',
+			}),
+		).toEqual({ status: "fail", detail: "no test files found" });
 	});
 
 	test("does not treat a *.Testing project as tests", () => {
