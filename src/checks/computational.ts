@@ -199,14 +199,16 @@ const PYTHON_TYPE_SECTIONS: [string, string][] = [
 /**
  * Not applicable unless the repo has a type-checkable language: TypeScript or Python
  * (need a type checker configured) or a statically typed language (passes).
- * Python counts only with a root manifest or a type checker configured (ADR 0010).
+ * TypeScript counts only with a root package.json or a tsconfig (ADR 0011); Python only
+ * with a root manifest or a type checker configured (ADR 0010).
  * Plain JavaScript, shell, Ruby, PHP, and docs-only repos are not applicable.
  */
 function typeCheck(repo: Repo): CheckOutcome {
 	const paths = [...repo.files.keys()];
-	const hasTypeScript = paths.some(
-		(path) => TYPESCRIPT.test(path) && !path.endsWith(".d.ts"),
-	);
+	const hasTsconfig = paths.some((path) => TSCONFIG.test(path));
+	const hasTypeScript =
+		paths.some((path) => TYPESCRIPT.test(path) && !path.endsWith(".d.ts")) &&
+		(hasTsconfig || repo.files.has("package.json"));
 	const hasPythonTypeChecker =
 		PYTHON_TYPE_FILES.some((path) => repo.files.has(path)) ||
 		hasSection(repo, PYTHON_TYPE_SECTIONS);
@@ -220,7 +222,7 @@ function typeCheck(repo: Repo): CheckOutcome {
 			: { status: "na" };
 	}
 	const missing: string[] = [];
-	if (hasTypeScript && !paths.some((path) => TSCONFIG.test(path))) {
+	if (hasTypeScript && !hasTsconfig) {
 		missing.push("TypeScript without tsconfig.json");
 	}
 	if (hasPython && !hasPythonTypeChecker) {
