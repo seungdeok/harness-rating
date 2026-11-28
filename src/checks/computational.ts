@@ -10,7 +10,7 @@ export const computationalChecks: Record<string, Check> = {
 	"test-suite": ({ repo }) => {
 		const hasTests =
 			[...repo.files.keys()].some((path) => TEST_FILE.test(path)) ||
-			hasRustInlineTests(repo);
+			hasInlineTests(repo);
 		if (!hasTests) return { status: "fail", detail: "no test files found" };
 		if (!hasTestCommand(repo)) {
 			return {
@@ -57,6 +57,8 @@ const BUILT_IN_TEST_RUNNERS = [
 	"Rakefile",
 	"pubspec.yaml",
 	"Package.swift",
+	// R: `R CMD check` runs tests/ for a package, which a DESCRIPTION file declares.
+	"DESCRIPTION",
 	"phpunit.xml",
 	"phpunit.xml.dist",
 	"phpunit.dist.xml",
@@ -68,12 +70,24 @@ const DOTNET_PROJECT = /^[^/]+\.(?:sln|slnx|csproj|fsproj|vbproj)$/;
 // npm init's placeholder: "echo \"Error: no test specified\" && exit 1"
 const NPM_PLACEHOLDER = /no test specified/;
 
-/** Rust keeps unit tests next to the code, in `#[cfg(test)]` modules with `#[test]` functions. */
-function hasRustInlineTests(repo: Repo): boolean {
-	if (!repo.files.has("Cargo.toml")) return false;
-	return [...repo.files.keys()].some(
-		(path) =>
-			path.endsWith(".rs") && (readText(repo, path) ?? "").includes("#[test]"),
+// Languages that keep unit tests next to the code: Rust `#[test]` functions and Zig
+// `test "name" { ... }` blocks.
+const INLINE_TESTS: { manifest: string; ext: string; marker: RegExp }[] = [
+	{ manifest: "Cargo.toml", ext: ".rs", marker: /#\[test\]/ },
+	{
+		manifest: "build.zig",
+		ext: ".zig",
+		marker: /^\s*test\s*(?:"|\{)|^\s*test\s+[A-Za-z_@][\w.]*\s*\{/m,
+	},
+];
+
+function hasInlineTests(repo: Repo): boolean {
+	return INLINE_TESTS.some(
+		({ manifest, ext, marker }) =>
+			repo.files.has(manifest) &&
+			[...repo.files.keys()].some(
+				(path) => path.endsWith(ext) && marker.test(readText(repo, path) ?? ""),
+			),
 	);
 }
 
@@ -87,7 +101,9 @@ function hasTestCommand(repo: Repo): boolean {
 	const make = ["Makefile", "makefile", "GNUmakefile", "justfile", "Justfile"]
 		.map((path) => readText(repo, path) ?? "")
 		.join("\n");
-	return /^test[\w-]*\s*:/m.test(make);
+	if (/^test[\w-]*\s*:/m.test(make)) return true;
+	// Zig: `zig build test` runs the step that build.zig declares.
+	return /\.step\(\s*"test"/.test(readText(repo, "build.zig") ?? "");
 }
 
 const LINTER_FILES = [
