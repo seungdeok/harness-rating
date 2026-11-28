@@ -60,6 +60,10 @@ const BUILT_IN_TEST_RUNNERS = [
 	"phpunit.xml",
 	"phpunit.xml.dist",
 	"phpunit.dist.xml",
+	// Bazel: `bazel test //...` runs every test target the BUILD files declare.
+	"MODULE.bazel",
+	"WORKSPACE",
+	"WORKSPACE.bazel",
 ];
 
 // `dotnet test` finds a solution or project file in the current directory.

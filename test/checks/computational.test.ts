@@ -22,6 +22,12 @@ describe("C1 test-suite", () => {
 			},
 		],
 		["go.mod and *_test.go", { "go.mod": "module x", "x_test.go": "" }],
+		...["MODULE.bazel", "WORKSPACE", "WORKSPACE.bazel"].map(
+			(root): [string, Record<string, string>] => [
+				`Bazel ${root} and tests/`,
+				{ [root]: "", BUILD: "", "tests/a_test.py": "" },
+			],
+		),
 		["pyproject and tests/", { "pyproject.toml": "", "tests/test_x.py": "" }],
 		[
 			"Makefile test target and test/",
