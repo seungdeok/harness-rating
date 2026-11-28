@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { guideChecks } from "../../src/checks/guides.ts";
 import { detect } from "../../src/scan/detect.ts";
+import { MAX_FILE_SIZE } from "../../src/scan/walk.ts";
 import { makeRepo } from "../support/temp-repo.ts";
 
 function run(
@@ -170,6 +171,24 @@ describe("A4 instruction-file-references", () => {
 			}),
 		).toEqual({ status: "pass" });
 	});
+
+	test("ignores a link whose target contains parentheses", () => {
+		expect(
+			run("instruction-file-references", {
+				"AGENTS.md": "[x](docs/foo(bar).md)",
+			}),
+		).toEqual({ status: "pass" });
+	});
+
+	test.each(["[", "[](", '[](a "'])(
+		"finishes quickly on a size-cap file of %j",
+		(unit) => {
+			const text = unit.repeat(Math.floor(MAX_FILE_SIZE / unit.length));
+			const start = performance.now();
+			run("instruction-file-references", { "AGENTS.md": text });
+			expect(performance.now() - start).toBeLessThan(1000);
+		},
+	);
 
 	test("is not applicable without an instruction file", () => {
 		expect(run("instruction-file-references", {})).toEqual({ status: "na" });
