@@ -139,6 +139,11 @@ describe("C2 linter-config", () => {
 			"phpstan.dist.neon",
 			"psalm.xml",
 			"psalm.xml.dist",
+			".credo.exs",
+			"config/.credo.exs",
+			"elvis.config",
+			".luacheckrc",
+			".hlint.yaml",
 		].map((config): [string, Record<string, string>] => [
 			config,
 			{ [config]: "" },
