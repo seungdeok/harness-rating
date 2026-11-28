@@ -229,8 +229,8 @@ describe("C3 type-check-config", () => {
 
 	test.each<[string, Record<string, string>, string]>([
 		[
-			"TypeScript without tsconfig",
-			{ "src/a.ts": "" },
+			"TypeScript and a root package.json without tsconfig",
+			{ "src/a.ts": "", "package.json": "{}" },
 			"TypeScript without tsconfig.json",
 		],
 		[
@@ -260,6 +260,10 @@ describe("C3 type-check-config", () => {
 		["plain JavaScript", { "index.js": "", "package.json": "{}" }],
 		["TypeScript declarations only", { "types/index.d.ts": "" }],
 		["Python scripts without a root manifest", { "scripts/a.py": "" }],
+		[
+			"TypeScript test fixtures without package.json or tsconfig",
+			{ cloc: "#!/usr/bin/env perl", "tests/inputs/greeter.tsx": "" },
+		],
 		[
 			"C plus Python scripts",
 			{ "kernel/a.c": "", "scripts/checkpatch.py": "" },

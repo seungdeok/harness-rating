@@ -1,6 +1,6 @@
 # ADR 0010: Python makes C3 applicable only with a root manifest or a configured checker
 
-- Status: Accepted
+- Status: Superseded by 0011
 - Date: 2026-11-25
 - Issue: #74
 
