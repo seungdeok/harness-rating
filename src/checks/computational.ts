@@ -113,7 +113,7 @@ const LINTER_FILES = [
 	".flake8",
 	".pylintrc",
 	"pylintrc",
-	// Go, Rust, Ruby, Swift, Kotlin, Dart, shell, CSS, PHP (formatters such as Pint are not linters)
+	// Go, Rust, Ruby, Swift, Kotlin, Dart, Elixir, Erlang, Lua, Haskell, shell, CSS, PHP (formatters such as Pint are not linters)
 	".golangci.yml",
 	".golangci.yaml",
 	".golangci.toml",
@@ -124,6 +124,11 @@ const LINTER_FILES = [
 	".swiftlint.yml",
 	"detekt.yml",
 	"analysis_options.yaml",
+	".credo.exs",
+	"config/.credo.exs",
+	"elvis.config",
+	".luacheckrc",
+	".hlint.yaml",
 	".shellcheckrc",
 	".stylelintrc",
 	".stylelintrc.json",
