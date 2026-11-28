@@ -102,7 +102,9 @@ function isBuildOrTestCommand(line: string): boolean {
 	return RUNNER.test(line) && BUILD_OR_TEST.test(line);
 }
 
-const LINK = /\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g;
+// Brackets and parentheses are excluded from the scanned spans so a failed match
+// stops at the next one: otherwise a file of `[` or `[](` backtracks in quadratic time.
+const LINK = /\[[^[\]]*\]\(\s*<?([^()\s<>]+)>?(?:\s+"[^"]*")?\s*\)/g;
 // Claude Code import syntax: `@path` outside code; `\ ` escapes a space in the path.
 const IMPORT = /(?:^|[\s(])@((?:\\ |[^\s`])+)/g;
 
